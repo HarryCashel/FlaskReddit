@@ -13,6 +13,7 @@ class User(db.Model):
     date_created = db.Column(db.DateTime, default=db.func.now())
     role = db.Column(db.SmallInteger, default=0)
 
+    joined_subreddits = db.relationship("SubredditMembers", backref="user", lazy="dynamic")
     thread = db.relationship("Thread", backref="user", lazy="dynamic")
     comment = db.relationship("Comment", backref="user", lazy="dynamic")
     subreddit = db.relationship("Subreddit", backref="user", lazy="dynamic")
