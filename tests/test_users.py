@@ -2,6 +2,7 @@ import unittest
 from main import create_app, db
 from models.User import User
 
+
 class TestUsers(unittest.TestCase):
     """A class that creates an instance of our application, creates our database
      and fires some requests to our endpoints"""
@@ -38,16 +39,12 @@ class TestUsers(unittest.TestCase):
         self.assertIsInstance(data, list)
 
     def test_create_user(self):
-        response = self.client.post("users/", json={
+        response = self.client.post("/users/", json={
             "email": "test1@email.com",
             "username": "testuser",
             "password": "password",
-            "role": "1",
         })
         data = response.get_json()
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(bool("id" in data.keys()))
 
-        user = User.query.get(data["id"])
-        self.assertIsNotNone(user)
 

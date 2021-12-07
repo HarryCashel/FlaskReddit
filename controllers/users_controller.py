@@ -18,7 +18,7 @@ def user_index():
 @users.route("/", methods=["POST"])
 def user_create():
     # Create a new user
-    user_fields = user_schema.loads(request.json)
+    user_fields = user_schema.load(request.json)
     new_user = User()
     new_user.username = user_fields["username"]
     new_user.email = user_fields["email"]
