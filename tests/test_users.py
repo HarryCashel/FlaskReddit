@@ -36,3 +36,12 @@ class TestUsers(unittest.TestCase):
         print(len(data))
         self.assertEqual(response.status_code, 200)
         self.assertIsInstance(data, list)
+
+    def test_create_user(self):
+        response = self.client.post("users/", json={
+            "email": "test1@email.com",
+            "username": "testuser",
+            "password": "password",
+            "role": "1",
+        })
+        self.assertEqual(response.status_code, 200)
