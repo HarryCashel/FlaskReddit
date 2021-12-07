@@ -1,6 +1,6 @@
 import unittest
 from main import create_app, db
-
+from models.User import User
 
 class TestUsers(unittest.TestCase):
     """A class that creates an instance of our application, creates our database
@@ -44,4 +44,10 @@ class TestUsers(unittest.TestCase):
             "password": "password",
             "role": "1",
         })
+        data = response.get_json()
         self.assertEqual(response.status_code, 200)
+        self.assertTrue(bool("id" in data.keys()))
+
+        user = User.query.get(data["id"])
+        self.assertIsNotNone(user)
+
