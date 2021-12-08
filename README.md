@@ -9,7 +9,7 @@ ___
 ### 2. Purpose
 
 ---
-### 3. Scope
+### 3. Scope (libraries, dependencies etc)
 
 ---
 #### 3.1 Database Entity Diagram
@@ -20,6 +20,7 @@ ___
 ---
 #### 3.3 API Endpoints
 
+https://app.swaggerhub.com/apis-docs/HarryCashel/FlaskReddit/1.0.0#/
 ---
 #### 3.4 Functionalities
 
@@ -33,7 +34,7 @@ ___
 #### 4.2 File Structure
 
 ___
-#### 4.3 Set Up Database
+#### 4.3 Set Up Databases (Testing and Development)
 
 ---
 #### 4.4 Run Migrations

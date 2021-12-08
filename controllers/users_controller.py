@@ -1,10 +1,13 @@
 from flask import Blueprint, request, jsonify
-from main import db
-from models.User import User
 from schemas.UserSchema import user_schema, users_schema
-from flask_migrate import Migrate
+from models.User import User
 
 users = Blueprint("users", __name__, url_prefix="/users")
+
+
+@users.route("/register", methods=["POST"])
+def auth_register():
+    return "working"
 
 
 @users.route("/", methods=["GET"])

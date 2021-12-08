@@ -8,7 +8,7 @@ class User(db.Model, UserMixin):
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String, unique=True, nullable=False)
+    email = db.Column(db.String(100), unique=True, nullable=False)
     username = db.Column(db.String(64), index=True, unique=True)
     password = db.Column(db.String(1000), nullable=False)
     date_created = db.Column(db.DateTime, default=db.func.now())
@@ -18,3 +18,7 @@ class User(db.Model, UserMixin):
     thread = db.relationship("Thread", backref="user", lazy="dynamic")
     comment = db.relationship("Comment", backref="user", lazy="dynamic")
     subreddit = db.relationship("Subreddit", backref="user", lazy="dynamic")
+
+    def __repr__(self):
+        """represent our object in a better format"""
+        return f"<User {self.id}:{self.email}:{self.username}>"
