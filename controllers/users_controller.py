@@ -11,10 +11,20 @@ users = Blueprint("users", __name__, url_prefix="/users")
 def auth_register():
     user_fields = user_schema.load(request.json)
 
-    user = User.query.filter_by(email=user_fields["email"].first())
+    user = User.query.filter_by(email=user_fields["email"]).first()
 
     if user:
-        return abort(400, description="Email already registered")
+        return abort(401, description="Email already registered")
+
+    user = User()
+    user.email = user_fields["email"]
+    user.set_password(user_fields["password"])
+    user.username = user_fields["username"]
+
+    db.session.add(user)
+    db.session.commit()
+
+    return jsonify(user_schema.dump(user))
 
 
 @users.route("/", methods=["GET"])
