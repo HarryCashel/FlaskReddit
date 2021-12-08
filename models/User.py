@@ -1,4 +1,4 @@
-from main import db
+from main import db, bcrypt
 from flask_login import UserMixin
 from models.Thread import Thread
 from models.Subreddit import Subreddit
@@ -22,3 +22,11 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         """represent our object in a better format"""
         return f"<User {self.id}:{self.email}:{self.username}>"
+
+    def set_password(self, password):
+        """Create hashed password"""
+        self.password = bcrypt.generate_password_hash(password).decode("utf-8")
+
+    def check_password(self, password):
+        return bcrypt.check_password_hash(self.password, password)
+

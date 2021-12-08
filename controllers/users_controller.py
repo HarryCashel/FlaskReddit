@@ -1,13 +1,20 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, abort
 from schemas.UserSchema import user_schema, users_schema
 from models.User import User
+from main import db
+
 
 users = Blueprint("users", __name__, url_prefix="/users")
 
 
 @users.route("/register", methods=["POST"])
 def auth_register():
-    return "working"
+    user_fields = user_schema.load(request.json)
+
+    user = User.query.filter_by(email=user_fields["email"].first())
+
+    if user:
+        return abort(400, description="Email already registered")
 
 
 @users.route("/", methods=["GET"])
