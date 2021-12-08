@@ -32,7 +32,6 @@ def user_index():
     # Return all users
     users = User.query.all()
 
-    
     return jsonify(users_schema.dump(users))
 
 
