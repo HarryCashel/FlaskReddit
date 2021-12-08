@@ -1,15 +1,16 @@
 from main import db
+from flask_login import UserMixin
 from models.Thread import Thread
 from models.Subreddit import Subreddit
 
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String, unique=True)
+    email = db.Column(db.String, unique=True, nullable=False)
     username = db.Column(db.String(64), index=True, unique=True)
-    password = db.Column(db.String(1000))
+    password = db.Column(db.String(1000), nullable=False)
     date_created = db.Column(db.DateTime, default=db.func.now())
     role = db.Column(db.SmallInteger, default=0)
 
