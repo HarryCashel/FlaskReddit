@@ -1,0 +1,825 @@
+---
+openapi: 3.0.0
+info:
+  title: FlaskReddit API
+  description: FlaskReddit API
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/HarryCashel/FlaskReddit/1.0.0
+  description: SwaggerHub API Auto Mocking
+tags:
+- name: users
+  description: User related functions
+- name: admins
+  description: Admin related functions
+- name: subreddits
+  description: Functions related to CRUD operations of subreddits
+- name: threads
+  description: Functions related to CRUD operations of threads
+- name: comments
+  description: Functions related to CRUD operations of comments
+paths:
+  /users:
+    get:
+      tags:
+      - users
+      description: Returns all users from the database
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        "401":
+          description: Headers required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+        "422":
+          description: Invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+  /users/register:
+    post:
+      tags:
+      - users
+      description: Creates a new user in database
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        "401":
+          description: Email already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+  /users/login:
+    post:
+      tags:
+      - users
+      description: Logs user in
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+        "401":
+          description: Incorrect login credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+  /users/{id}:
+    get:
+      tags:
+      - users
+      summary: Gets a user by ID.
+      parameters:
+      - name: id
+        in: path
+        description: The user ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: OK
+    delete:
+      tags:
+      - users
+      summary: Deletes the user with the specified ID.
+      parameters:
+      - name: id
+        in: path
+        description: The user ID.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "204":
+          description: User was deleted.
+    patch:
+      tags:
+      - users
+      summary: Updates the user with the specified ID.
+      parameters:
+      - name: id
+        in: path
+        description: The user ID.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: User was updated.
+        "401":
+          description: Not logged in - Load login page
+        "422":
+          description: Authentication information is missing or invalid
+  /subreddits/:
+    get:
+      tags:
+      - subreddits
+      description: Retrieve all subreddits
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+        "404":
+          description: Content not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+    post:
+      tags:
+      - subreddits
+      description: Create a new subreddit
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subreddit'
+        "404":
+          description: Subreddit not found
+  /subreddits/{id}:
+    get:
+      tags:
+      - subreddits
+      description: Gets a subreddit by id
+      parameters:
+      - name: id
+        in: path
+        description: The subreddit id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+        "404":
+          description: Content not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+    delete:
+      tags:
+      - subreddits
+      description: Delete a subreddit
+      parameters:
+      - name: id
+        in: path
+        description: The subreddit id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Successful operation
+        "404":
+          description: Subreddit not found
+        "401":
+          description: Invalid user/Unauthorised to delete
+    patch:
+      tags:
+      - subreddits
+      description: Updates a subreddit
+      parameters:
+      - name: id
+        in: path
+        description: The subreddit id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subreddit'
+        "404":
+          description: Subreddit not found
+        "401":
+          description: Invalid user/Unauthorised to patch
+  /subreddits/{id}/join:
+    get:
+      tags:
+      - subreddits
+      description: Joins a subreddit
+      parameters:
+      - name: id
+        in: path
+        description: The subreddit id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+        "404":
+          description: Content not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+  /subreddits/{id}/leave:
+    get:
+      tags:
+      - subreddits
+      description: Leaves a subreddit
+      parameters:
+      - name: id
+        in: path
+        description: The subreddit id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+        "404":
+          description: Content not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+  /{subreddit_id}/threads/:
+    get:
+      tags:
+      - threads
+      description: Returns all threads from specific subreddit
+      parameters:
+      - name: subreddit_id
+        in: path
+        description: The subreddit id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Successful return list of subreddits
+        "401":
+          description: Headers required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+        "404":
+          description: subreddit not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+        "422":
+          description: Invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+    post:
+      tags:
+      - threads
+      description: Creates a new thread in specific subreddit
+      parameters:
+      - name: subreddit_id
+        in: path
+        description: The subreddit id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Thread'
+        "401":
+          description: Not logged in - Load login page
+        "404":
+          description: subreddit not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+        "422":
+          description: Invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+  /{subreddit_id}/threads/{thread_id}:
+    get:
+      tags:
+      - threads
+      description: Returns specific thread
+      parameters:
+      - name: subreddit_id
+        in: path
+        description: The subreddit id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      - name: thread_id
+        in: path
+        description: The thread id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Successful operation
+        "401":
+          description: Not logged in - Load login page
+        "422":
+          description: Authentication information is missing or invalid
+        "404":
+          description: Thread not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+    post:
+      tags:
+      - threads
+      description: Creates a new comment on a specific thread
+      parameters:
+      - name: subreddit_id
+        in: path
+        description: The subreddit id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      - name: thread_id
+        in: path
+        description: The thread id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        "401":
+          description: Not logged in - Load login page
+        "422":
+          description: Authentication information is missing or invalid
+        "404":
+          description: Thread not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+    delete:
+      tags:
+      - threads
+      description: Deletes specific thread
+      parameters:
+      - name: subreddit_id
+        in: path
+        description: The subreddit id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      - name: thread_id
+        in: path
+        description: The thread id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Successful operation
+        "401":
+          description: Not logged in - Load login page
+        "422":
+          description: Authentication information is missing or invalid
+        "404":
+          description: Thread not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+    patch:
+      tags:
+      - threads
+      description: Update specific thread content
+      parameters:
+      - name: subreddit_id
+        in: path
+        description: The subreddit id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      - name: thread_id
+        in: path
+        description: The thread id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Successful operation
+        "401":
+          description: Not logged in - Load login page
+        "422":
+          description: Authentication information is missing or invalid
+        "404":
+          description: Thread not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+  /subreddit/{subreddit_id}/{thread_id}/comments/:
+    get:
+      tags:
+      - comments
+      description: Gets all comments on a specific thread
+      parameters:
+      - name: subreddit_id
+        in: path
+        description: The subreddit id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      - name: thread_id
+        in: path
+        description: The thread id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Successful operation
+        "404":
+          description: Thread not found
+  /subreddit/{subreddit_id}/{thread_id}/comments/{comment_id}:
+    get:
+      tags:
+      - comments
+      description: Gets comment on a specific thread
+      parameters:
+      - name: subreddit_id
+        in: path
+        description: The subreddit id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      - name: thread_id
+        in: path
+        description: The thread id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      - name: comment_id
+        in: path
+        description: The comment id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Successful operation
+        "401":
+          description: Not logged in - Load login page
+    post:
+      tags:
+      - comments
+      description: Creates a new comment on a specific comment
+      parameters:
+      - name: subreddit_id
+        in: path
+        description: The subreddit id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      - name: thread_id
+        in: path
+        description: The thread id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      - name: comment_id
+        in: path
+        description: The comment id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        "401":
+          description: Not logged in - Load login page
+        "422":
+          description: Authentication information is missing or invalid
+        "404":
+          description: Thread not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+    delete:
+      tags:
+      - comments
+      description: Deletes comment on a specific thread
+      parameters:
+      - name: subreddit_id
+        in: path
+        description: The subreddit id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      - name: thread_id
+        in: path
+        description: The thread id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      - name: comment_id
+        in: path
+        description: The comment id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Successful operation
+        "401":
+          description: Not logged in - Load login page
+        "422":
+          description: Authentication information is missing or invalid
+    patch:
+      tags:
+      - comments
+      description: Updates comment on a specific thread
+      parameters:
+      - name: subreddit_id
+        in: path
+        description: The subreddit id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      - name: thread_id
+        in: path
+        description: The thread id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      - name: comment_id
+        in: path
+        description: The comment id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Successful operation
+        "401":
+          description: Not logged in - Load login page
+        "422":
+          description: Authentication information is missing or invalid
+components:
+  schemas:
+    User:
+      required:
+      - email
+      - id
+      - password
+      - username
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The user ID
+          format: uuid
+        username:
+          type: string
+          description: The user name
+        email:
+          type: string
+          description: The user email
+          format: email
+        password:
+          type: string
+        date_created:
+          type: string
+        role:
+          type: integer
+        threads:
+          $ref: '#/components/schemas/'
+        comments:
+          $ref: '#/components/schemas/'
+        subreddits:
+          $ref: '#/components/schemas/'
+    Subreddit:
+      required:
+      - content_about
+      - id
+      - name
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The subreddit ID
+          format: uuid
+        name:
+          type: string
+          description: The name of the subreddit
+        content_about:
+          type: string
+          description: About section
+        date_created:
+          type: string
+        owner_id:
+          $ref: '#/components/schemas/'
+        joined_users:
+          $ref: '#/components/schemas/'
+        owned_threads:
+          $ref: '#/components/schemas/'
+    Thread:
+      required:
+      - content
+      - id
+      - title
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The thread ID
+          format: uuid
+        title:
+          type: string
+          description: The name of the thread
+        content:
+          type: string
+          description: Text/links etc
+        date_created:
+          type: string
+        owner_id:
+          $ref: '#/components/schemas/'
+        parent_subreddit_id:
+          $ref: '#/components/schemas/'
+        child_comments:
+          $ref: '#/components/schemas/'
+        upvotes:
+          $ref: '#/components/schemas/'
+        downvotes:
+          $ref: '#/components/schemas/'
+    Comment:
+      required:
+      - content
+      - id
+      - parent_thread_id
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The comment ID
+          format: uuid
+        content:
+          type: string
+          description: Text/links etc
+        date_created:
+          type: string
+        owner_id:
+          $ref: '#/components/schemas/'
+        parent_thread_id:
+          $ref: '#/components/schemas/'
+        parent_comment_id:
+          $ref: '#/components/schemas/'
+        child_comments:
+          $ref: '#/components/schemas/'
+        upvotes:
+          $ref: '#/components/schemas/'
+        downvotes:
+          $ref: '#/components/schemas/'
+    inline_response_401:
+      type: object
+      properties:
+        message:
+          type: string
+    inline_response_200:
+      required:
+      - email
+      - password
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+  responses:
+    UnauthorisedError:
+      description: Authentication information is missing or invalid
+    RedirectLogin:
+      description: Not logged in - Load login page
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
