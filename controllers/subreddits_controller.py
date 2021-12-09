@@ -29,7 +29,7 @@ def get_subreddit_id(name):
 
 
 def check_for_subreddit(sub_id):
-    subreddit = Subreddit.query.filter_by(id=sub_id)
+    subreddit = Subreddit.query.get(sub_id)
 
     if not subreddit:
         abort(404, description="Subreddit does not exist")
@@ -46,6 +46,14 @@ def check_member_subreddit(sub_id):
         abort(401, description="Do not have permission")
 
     return subreddit_member
+
+
+def is_owner(sub_id):
+    subreddit_id = Subreddit.query.get(sub_id)
+
+    if subreddit_id == get_user():
+        return True
+    return False
 
 
 @subreddits.route("/", methods=["GET"])
@@ -89,8 +97,16 @@ def create_subreddit():
 @subreddits.route("/<int:id>", methods=["PATCH"])
 @jwt_required
 def update_subreddits(id):
-    subreddit = check_for_subreddit(id)
-    check_member_subreddit(id)
+    check_for_subreddit(id)
+
+    user_id = get_jwt_identity()
+
+    check_owner = Subreddit.query.filter_by(id=id, owner_id=user_id)
+
+    if not check_owner:
+        abort(401, description="you don't own")
+
+    subreddit = Subreddit.query.filter_by(id=id)
     update_fields = subreddit_schema.load(request.json, partial=True)
     subreddit.update(update_fields)
     db.session.commit()
@@ -101,8 +117,20 @@ def update_subreddits(id):
 @subreddits.route("/<int:id>", methods=["DELETE"])
 @jwt_required
 def delete_subreddits(id):
-    subreddit = check_for_subreddit(id)
+    check_for_subreddit(id)
 
+    user_id = get_jwt_identity()
+    check_owner = Subreddit.query.filter_by(id=id, owner_id=user_id)
+
+    if not check_owner:
+        abort(401, description="you don't own")
+
+    subreddit = Subreddit.query.get(id)
+
+    db.session.delete(subreddit)
+    db.session.commit()
+
+    return jsonify(subreddit_schema(subreddit))
 
 @subreddits.route("/<int:id>", methods=["GET"])
 def get_specific_subreddits(id):
@@ -117,3 +145,8 @@ def get_specific_subreddits(id):
 def get_user_subreddits():
     pass
 
+
+@subreddits.route("/join", methods=["POST"])
+@jwt_required
+def join_subreddit():
+    pass

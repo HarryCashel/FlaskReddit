@@ -11,5 +11,5 @@ class Subreddit(db.Model):
     description = db.Column(db.String(1000), nullable=False)
 
     owner_id = db.Column(db.Integer, db.ForeignKey("users.id"))
-    joined_users = db.relationship("SubredditMembers", backref="subreddit", lazy="dynamic")
+    joined_users = db.relationship("SubredditMembers", backref="subreddit", lazy="dynamic", cascade="all, delete")
     thread = db.relationship("Thread", backref="subreddit", lazy="dynamic")
