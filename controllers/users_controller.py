@@ -1,8 +1,9 @@
 from flask import Blueprint, request, jsonify, abort
 from schemas.UserSchema import user_schema, users_schema
 from models.User import User
-from main import db, bcrypt
-
+from main import db, bcrypt, jwt
+from flask_jwt_extended import create_access_token
+from datetime import timedelta
 
 users = Blueprint("users", __name__, url_prefix="/users")
 
@@ -44,7 +45,10 @@ def user_login():
     if not user or not bcrypt.check_password_hash(user.password, user_fields["password"]):
         return abort(401, description="No user with those credentials")
 
-    return "token"
+    expiry = timedelta(days=1)
+    access_token = create_access_token(identity=str(user.id), expires_delta=expiry)
+
+    return jsonify({"token": access_token})
 
 # @users.route("/<int:id>", methods=["GET"])
 # def user_show(id):
