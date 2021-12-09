@@ -28,6 +28,26 @@ def get_subreddit_id(name):
     return subreddit.id
 
 
+def check_for_subreddit(sub_id):
+    subreddit = Subreddit.query.filter_by(id=sub_id)
+
+    if not subreddit:
+        abort(404, description="Subreddit does not exist")
+
+    return subreddit
+
+
+def check_member_subreddit(sub_id):
+    user = get_user()
+    subreddit_member = SubredditMembers.query.filter_by(
+        user_id=user.id, subreddit_id=sub_id).first()
+
+    if not subreddit_member:
+        abort(401, description="Do not have permission")
+
+    return subreddit_member
+
+
 @subreddits.route("/", methods=["GET"])
 def get_all_subreddits():
     # return all subreddits
@@ -69,19 +89,8 @@ def create_subreddit():
 @subreddits.route("/<int:id>", methods=["PATCH"])
 @jwt_required
 def update_subreddits(id):
-    user = get_user()
-
-    subreddit = Subreddit.query.filter_by(id=id)
-
-    if not subreddit:
-        abort(404, description="Subreddit does not exist")
-
-    subreddit_member = SubredditMembers.query.filter_by(
-        user_id=user.id, subreddit_id=id).first()
-
-    if not subreddit_member:
-        abort(401, description="Do not have permission")
-
+    subreddit = check_for_subreddit(id)
+    check_member_subreddit(id)
     update_fields = subreddit_schema.load(request.json, partial=True)
     subreddit.update(update_fields)
     db.session.commit()
@@ -89,12 +98,10 @@ def update_subreddits(id):
     return jsonify(subreddit_schema.dump(subreddit[0]))
 
 
-
-
-
 @subreddits.route("/<int:id>", methods=["DELETE"])
-def delete_subreddits():
-    pass
+@jwt_required
+def delete_subreddits(id):
+    subreddit = check_for_subreddit(id)
 
 
 @subreddits.route("/<int:id>", methods=["GET"])
@@ -104,6 +111,7 @@ def get_specific_subreddits(id):
     if not subreddit:
         abort(404, description="Subreddit does not exist")
     return jsonify(subreddit_schema.dump(subreddit))
+
 
 @subreddits.route("/<int:id>", methods=["GET"])
 def get_user_subreddits():
