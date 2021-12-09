@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, abort
 from schemas.UserSchema import user_schema, users_schema
 from models.User import User
-from main import db
+from main import db, bcrypt
 
 
 users = Blueprint("users", __name__, url_prefix="/users")
@@ -35,19 +35,16 @@ def user_index():
     return jsonify(users_schema.dump(users))
 
 
-@users.route("/", methods=["POST"])
-def user_create():
-    # Create a new user
+@users.route("/login", methods=["POST"])
+def user_login():
     user_fields = user_schema.load(request.json)
-    new_user = User()
-    new_user.username = user_fields["username"]
-    new_user.email = user_fields["email"]
-    new_user.password = user_fields["password"]
 
-    db.session.add(new_user)
-    db.session.commit()
+    user = User.query.filter_by(email=user_fields["email"]).first()
+    user_fields["username"] = user.username
+    if not user or not bcrypt.check_password_hash(user.password, user_fields["password"]):
+        return abort(401, description="No user with those credentials")
 
-    return jsonify(user_schema.dump(new_user))
+    return "token"
 
 # @users.route("/<int:id>", methods=["GET"])
 # def user_show(id):
