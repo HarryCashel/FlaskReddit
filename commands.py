@@ -21,6 +21,7 @@ def drop_db():
 def seed_db():
     from models.User import User
     from models.Subreddit import Subreddit
+    from models.SubredditMembers import SubredditMembers
     from faker import Faker
     from main import bcrypt
     import random
@@ -44,6 +45,13 @@ def seed_db():
         subreddit.description = "description"
         subreddit.owner_id = random.choice(users).id
         db.session.add(subreddit)
+        db.session.commit()
 
+        subreddit_member = SubredditMembers()
+        subreddit_member.subreddit_id = subreddit.id
+        subreddit_member.user_id = subreddit.owner_id
+
+        db.session.add(subreddit_member)
     db.session.commit()
+
     print("Tables seeded")
