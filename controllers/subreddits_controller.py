@@ -23,6 +23,11 @@ def get_user():
     return user
 
 
+def get_subreddit_id(name):
+    subreddit = Subreddit.query.filter_by(name=name).first()
+    return subreddit.id
+
+
 @subreddits.route("/", methods=["GET"])
 def get_all_subreddits():
     # return all subreddits
@@ -49,6 +54,13 @@ def create_subreddit():
     subreddit.owner_id = user.id
 
     db.session.add(subreddit)
+    db.session.commit()
+
+    subreddit_members = SubredditMembers()
+    subreddit_members.user_id = user.id
+    subreddit_members.subreddit_id = get_subreddit_id(subreddit_fields["name"])
+
+    db.session.add(subreddit_members)
     db.session.commit()
 
     return jsonify(subreddit_schema.dump(subreddit))
