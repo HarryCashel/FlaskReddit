@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, abort
 from schemas.UserSchema import user_schema, users_schema
 from models.User import User
 from main import db, bcrypt, jwt
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from datetime import timedelta
 
 users = Blueprint("users", __name__, url_prefix="/users")
@@ -50,37 +50,19 @@ def user_login():
 
     return jsonify({"token": access_token})
 
-# @users.route("/<int:id>", methods=["GET"])
-# def user_show(id):
-#     # Return a single user
-#     sql = "SELECT * FROM users WHERE id = %s;"
-#     cursor.execute(sql, (id,))
-#     user = cursor.fetchone()
-#     return jsonify(user)
-#
-#
-# @users.route("/<int:id>", methods=["PUT", "PATCH"])
-# def user_update(id):
-#     # Update a user
-#     sql = "UPDATE users SET title = %s WHERE id = %s;"
-#     cursor.execute(sql, (request.json["title"], id))
-#     connection.commit()
-#
-#     sql = "SELECT * FROM users WHERE id = %s"
-#     cursor.execute(sql, (id,))
-#     user = cursor.fetchone()
-#     return jsonify(user)
-#
-#
-# @users.route("/<int:id>", methods=["DELETE"])
-# def user_delete(id):
-#     sql = "SELECT * FROM users WHERE id = %s;"
-#     cursor.execute(sql, (id,))
-#     user = cursor.fetchone()
-#
-#     if user:
-#         sql = "DELETE FROM users WHERE id = %s;"
-#         cursor.execute(sql, (id,))
-#         connection.commit()
-#
-#     return jsonify(user)
+
+@users.route("/", methods=["PATCH"])
+@jwt_required
+def update_user():
+    user_id = get_jwt_identity()
+
+    user = User.query.filter_by(id=user_id)
+
+    if not user:
+        abort(401, description="Invalid user")
+
+    update_fields = user_schema.load(request.json, partial=True)
+    user.update(update_fields)
+    db.session.commit()
+
+    return jsonify(user_schema.dump(user[0]))
