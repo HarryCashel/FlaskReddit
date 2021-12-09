@@ -67,8 +67,24 @@ def create_subreddit():
 
 
 @subreddits.route("/<int:id>", methods=["PATCH"])
-def update_subreddits():
-    pass
+@jwt_required
+def update_subreddits(id):
+    user = get_user()
+    subreddit_member = SubredditMembers.query.filter_by(
+        user_id=user.id, subreddit_id=id).first()
+    subreddit = Subreddit.query.filter_by(id=id)
+
+    if not subreddit:
+        abort(404, description="Subreddit does not exist")
+
+    update_fields = subreddit_schema.load(request.json, partial=True)
+    subreddit.update(update_fields)
+    db.session.commit()
+
+    return jsonify(subreddit_schema.dump(subreddit[0]))
+
+
+
 
 
 @subreddits.route("/<int:id>", methods=["DELETE"])
@@ -77,9 +93,12 @@ def delete_subreddits():
 
 
 @subreddits.route("/<int:id>", methods=["GET"])
-def get_specific_subreddits():
-    pass
+def get_specific_subreddits(id):
+    subreddit = Subreddit.query.get(id)
 
+    if not subreddit:
+        abort(404, description="Subreddit does not exist")
+    return jsonify(subreddit_schema.dump(subreddit))
 
 @subreddits.route("/<int:id>", methods=["GET"])
 def get_user_subreddits():

@@ -10,3 +10,4 @@ class SubredditMembers(db.Model):
     subreddit_id = db.Column(
         db.Integer, db.ForeignKey("subreddits.id"), primary_key=True
     )
+
