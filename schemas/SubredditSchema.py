@@ -14,3 +14,5 @@ class SubredditSchema(ma.SQLAlchemyAutoSchema):
     threads = ma.Nested(threads_schema)
 
 
+subreddit_schema = SubredditSchema()
+subreddits_schema = SubredditSchema(many=True)
