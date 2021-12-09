@@ -9,7 +9,7 @@ class SubredditSchema(ma.SQLAlchemyAutoSchema):
         model = Subreddit
 
     name = ma.String(required=True)
-    content_about = ma.String(required=True, validate=Length(min=1))
+    description = ma.String(required=True, validate=Length(min=1))
 
     threads = ma.Nested(threads_schema)
 
