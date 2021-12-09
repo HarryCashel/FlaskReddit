@@ -8,6 +8,14 @@ from datetime import timedelta
 users = Blueprint("users", __name__, url_prefix="/users")
 
 
+@users.route("/all", methods=["GET"])
+def get_all_users_index():
+    # Return all users
+    users = User.query.all()
+
+    return jsonify(users_schema.dump(users))
+
+
 @users.route("/register", methods=["POST"])
 def auth_register():
     user_fields = user_schema.load(request.json)
@@ -28,14 +36,6 @@ def auth_register():
     return jsonify(user_schema.dump(user))
 
 
-@users.route("/", methods=["GET"])
-def user_index():
-    # Return all users
-    users = User.query.all()
-
-    return jsonify(users_schema.dump(users))
-
-
 @users.route("/login", methods=["POST"])
 def user_login():
     user_fields = user_schema.load(request.json)
@@ -49,6 +49,19 @@ def user_login():
     access_token = create_access_token(identity=str(user.id), expires_delta=expiry)
 
     return jsonify({"token": access_token})
+
+
+@users.route("/", methods=["GET"])
+@jwt_required
+def get_user():
+    user_id = get_jwt_identity()
+
+    user = User.query.get(user_id)
+
+    if not user:
+        abort(401, description="Invalid user")
+
+    return jsonify(user_schema.dump(user))
 
 
 @users.route("/", methods=["PATCH"])
@@ -66,3 +79,18 @@ def update_user():
     db.session.commit()
 
     return jsonify(user_schema.dump(user[0]))
+
+
+@users.route("/", methods=["DELETE"])
+@jwt_required
+def delete_user():
+    user_id = get_jwt_identity()
+
+    user = User.query.get(user_id)
+
+    if not user:
+        abort(401, description="Invalid user")
+    db.session.delete(user)
+    db.session.commit()
+
+    return jsonify(user_schema.dump(user))
