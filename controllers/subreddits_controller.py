@@ -8,7 +8,7 @@ from models.SubredditMembers import SubredditMembers
 from schemas.UserSchema import user_schema, users_schema
 from schemas.CommentSchema import comment_schema, comments_schema
 from schemas.ThreadSchema import thread_schema, threads_schema
-from schemas.SubredditSchema import subreddit_schema, subreddits_schema, subreddit_member_schema
+from schemas.SubredditSchema import subreddit_schema, subreddits_schema, subreddit_member_schema, subreddit_members_schema
 
 subreddits = Blueprint("subreddits", __name__, url_prefix="/subreddits")
 
@@ -149,7 +149,7 @@ def get_user_subreddits():
 
     subreddits = SubredditMembers.query.filter_by(user_id=user_id).all()
 
-    return jsonify(subreddits_schema(subreddits))
+    return jsonify(subreddit_members_schema.dump(subreddits))
 
 
 @subreddits.route("/<int:id>/join", methods=["POST"])
