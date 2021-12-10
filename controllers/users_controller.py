@@ -62,7 +62,7 @@ def get_user():
     user = User.query.get(user_id)
 
     if not user:
-        abort(401, description="Invalid user")
+        return abort(401, description="Invalid user")
 
     return jsonify(user_schema.dump(user))
 
@@ -75,7 +75,7 @@ def update_user():
     user = User.query.filter_by(id=user_id)
 
     if not user:
-        abort(401, description="Invalid user")
+        return abort(401, description="Invalid user")
 
     update_fields = user_schema.load(request.json, partial=True)
     user.update(update_fields)
@@ -92,7 +92,7 @@ def delete_user():
     user = User.query.get(user_id)
 
     if not user:
-        abort(401, description="Invalid user")
+        return abort(401, description="Invalid user")
     db.session.delete(user)
     db.session.commit()
 

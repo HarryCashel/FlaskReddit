@@ -28,6 +28,7 @@ def seed_db():
 
     faker = Faker()
     users = []
+    subreddits = []
 
     for i in range(5):
         user = User()
@@ -45,13 +46,26 @@ def seed_db():
         subreddit.description = "description"
         subreddit.owner_id = random.choice(users).id
         db.session.add(subreddit)
+        subreddits.append(subreddit)
         db.session.commit()
 
         subreddit_member = SubredditMembers()
         subreddit_member.subreddit_id = subreddit.id
         subreddit_member.user_id = subreddit.owner_id
-
         db.session.add(subreddit_member)
+
     db.session.commit()
+
+    # for i in range(5):
+    #     new_member = SubredditMembers()
+    #     new_member.user_id = random.choice(users).id
+    #     new_member.subreddit_id = random.choice(subreddits).id
+    #
+    #     db.session.add(new_member)
+    #
+    # db.session.commit()
+
+
+
 
     print("Tables seeded")

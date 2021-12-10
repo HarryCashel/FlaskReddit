@@ -8,7 +8,7 @@ from models.SubredditMembers import SubredditMembers
 from schemas.UserSchema import user_schema, users_schema
 from schemas.CommentSchema import comment_schema, comments_schema
 from schemas.ThreadSchema import thread_schema, threads_schema
-from schemas.SubredditSchema import subreddit_schema, subreddits_schema
+from schemas.SubredditSchema import subreddit_schema, subreddits_schema, subreddit_member_schema
 
 subreddits = Blueprint("subreddits", __name__, url_prefix="/subreddits")
 
@@ -18,7 +18,7 @@ def get_user():
     user = User.query.get(user_id)
 
     if not user:
-        abort(401, description="Invalid user")
+        return abort(401, description="Invalid user")
 
     return user
 
@@ -32,7 +32,7 @@ def check_for_subreddit(sub_id):
     subreddit = Subreddit.query.get(sub_id)
 
     if not subreddit:
-        abort(404, description="Subreddit does not exist")
+        return abort(404, description="Subreddit does not exist")
 
     return subreddit
 
@@ -43,7 +43,7 @@ def check_member_subreddit(sub_id):
         user_id=user.id, subreddit_id=sub_id).first()
 
     if not subreddit_member:
-        abort(401, description="Do not have permission")
+        return abort(401, description="Do not have permission")
 
     return subreddit_member
 
@@ -104,7 +104,7 @@ def update_subreddits(id):
     check_owner = Subreddit.query.filter_by(id=id, owner_id=user_id)
 
     if not check_owner:
-        abort(401, description="you don't own")
+        return abort(401, description="you don't own")
 
     subreddit = Subreddit.query.filter_by(id=id)
     update_fields = subreddit_schema.load(request.json, partial=True)
@@ -123,7 +123,7 @@ def delete_subreddits(id):
     check_owner = Subreddit.query.filter_by(id=id, owner_id=user_id)
 
     if not check_owner:
-        abort(401, description="you don't own")
+        return abort(401, description="you don't own")
 
     subreddit = Subreddit.query.get(id)
 
@@ -132,21 +132,66 @@ def delete_subreddits(id):
 
     return jsonify(subreddit_schema(subreddit))
 
+
 @subreddits.route("/<int:id>", methods=["GET"])
 def get_specific_subreddits(id):
     subreddit = Subreddit.query.get(id)
 
     if not subreddit:
-        abort(404, description="Subreddit does not exist")
+        return abort(404, description="Subreddit does not exist")
     return jsonify(subreddit_schema.dump(subreddit))
 
 
-@subreddits.route("/<int:id>", methods=["GET"])
-def get_user_subreddits():
-    pass
-
-
-@subreddits.route("/join", methods=["POST"])
+@subreddits.route("/user", methods=["GET"])
 @jwt_required
-def join_subreddit():
-    pass
+def get_user_subreddits():
+    user_id = get_jwt_identity()
+
+    subreddits = SubredditMembers.query.filter_by(user_id=user_id).all()
+
+    return jsonify(subreddits_schema(subreddits))
+
+
+@subreddits.route("/<int:id>/join", methods=["POST"])
+@jwt_required
+def join_subreddit(id):
+    user_id = get_jwt_identity()
+    # subreddit_members = Subreddit.query.filter_by(joined_users=user_id)
+
+    subreddit = SubredditMembers.query.filter_by(user_id=user_id, subreddit_id=id).first()
+
+    if not subreddit:
+        new_member = SubredditMembers()
+        new_member.user_id = user_id
+        new_member.subreddit_id = id
+
+        db.session.add(new_member)
+
+        add_to_joined_users = Subreddit.query.filter_by(id=id).first()
+        add_to_joined_users.joined_users.append(new_member)
+
+        add_user = User.query.filter_by(id=user_id).first()
+        add_user.joined_subreddits.append(new_member)
+
+        db.session.commit()
+
+        return jsonify(subreddit_schema.dump(add_to_joined_users))
+    else:
+        abort(401, description="Already a member")
+    abort(404, description="Subreddit does not exist")
+
+
+@subreddits.route("/<int:id>/leave", methods=["DELETE"])
+@jwt_required
+def leave_subreddit(id):
+    user_id = get_jwt_identity()
+    # subreddit_members = Subreddit.query.filter_by(joined_users=user_id)
+
+    subreddit = SubredditMembers.query.filter_by(user_id=user_id, subreddit_id=id).first()
+
+    if not subreddit:
+        return abort(401, description="Not a member of this group")
+    db.session.delete(subreddit)
+    db.session.commit()
+
+    return jsonify(subreddit_member_schema.dump(subreddit))

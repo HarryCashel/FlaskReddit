@@ -1,5 +1,6 @@
 from main import ma
 from models.Subreddit import Subreddit
+from models.SubredditMembers import SubredditMembers
 from schemas.ThreadSchema import threads_schema
 from schemas.UserSchema import UserSchema
 from marshmallow.validate import Length
@@ -16,5 +17,16 @@ class SubredditSchema(ma.SQLAlchemyAutoSchema):
     threads = ma.Nested(threads_schema)
 
 
+class SubredditMembersSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = SubredditMembers
+
+    user_id = ma.String()
+    subreddit_id = ma.String()
+
+
 subreddit_schema = SubredditSchema()
 subreddits_schema = SubredditSchema(many=True)
+
+subreddit_member_schema = SubredditMembersSchema()
+subreddit_members_schema = SubredditMembersSchema(many=True)
