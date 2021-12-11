@@ -50,8 +50,25 @@ def create_threads(subreddit_id):
 
 
 @threads.route("/<int:thread_id>", methods=["DELETE"])
+@jwt_required
 def delete_thread(thread_id):
-    pass
+    user_id = get_jwt_identity()
+
+    thread = Thread.query.get(thread_id)
+
+    if not thread:
+        return abort(404, description="Thread not found")
+
+    is_owner = Thread.query.filter_by(thread_owner=user_id).first().thread_owner
+
+    if int(user_id) != is_owner:
+        return abort(401, description="Invalid user")
+
+
+    db.session.delete(thread)
+    db.session.commit()
+
+    return jsonify(thread_schema.dump(thread))
 
 
 @threads.route("/<int:thread_id>", methods=["PATCH"])
