@@ -3,6 +3,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from main import db
 from models.User import User
 from models.Subreddit import Subreddit
+from sqlalchemy import exc
 from models.Thread import Thread, Comment
 from models.SubredditMembers import SubredditMembers
 from schemas.UserSchema import user_schema, users_schema
@@ -30,7 +31,6 @@ def get_subreddit_id(name):
 
 def check_for_subreddit(sub_id):
     subreddit = Subreddit.query.get(sub_id)
-
     if not subreddit:
         return abort(404, description="Subreddit does not exist")
 
@@ -106,12 +106,16 @@ def update_subreddits(id):
     if not check_owner:
         return abort(401, description="you don't own")
 
-    subreddit = Subreddit.query.filter_by(id=id)
-    update_fields = subreddit_schema.load(request.json, partial=True)
-    subreddit.update(update_fields)
-    db.session.commit()
+    try:
+        subreddit = Subreddit.query.filter_by(id=id)
+        update_fields = subreddit_schema.load(request.json, partial=True)
+        subreddit.update(update_fields)
+        db.session.commit()
 
-    return jsonify(subreddit_schema.dump(subreddit[0]))
+        return jsonify(subreddit_schema.dump(subreddit[0]))
+    except exc.IntegrityError:
+        db.session.rollback()
+        return abort(401, description="Subreddit name is taken")
 
 
 @subreddits.route("/<int:id>", methods=["DELETE"])
@@ -120,9 +124,11 @@ def delete_subreddits(id):
     check_for_subreddit(id)
 
     user_id = get_jwt_identity()
-    check_owner = Subreddit.query.filter_by(id=id, owner_id=user_id)
+    check_owner = Subreddit.query.filter_by(id=id, owner_id=user_id).first()
 
-    if not check_owner:
+    print(check_owner.owner_id, user_id)
+
+    if int(user_id) != check_owner.owner_id:
         return abort(401, description="you don't own")
 
     subreddit = Subreddit.query.get(id)
@@ -130,7 +136,7 @@ def delete_subreddits(id):
     db.session.delete(subreddit)
     db.session.commit()
 
-    return jsonify(subreddit_schema(subreddit))
+    return jsonify(user_schema.dump(user_id))
 
 
 @subreddits.route("/<int:id>", methods=["GET"])
