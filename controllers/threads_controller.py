@@ -11,6 +11,22 @@ from schemas.CommentSchema import comment_schema, comments_schema
 threads = Blueprint("threads", __name__, url_prefix="/threads")
 
 
+def check_is_thread_owner(_id):
+    user_id = get_jwt_identity()
+
+    search_query = Thread.query.get(_id)
+    if not search_query:
+        return abort(404, description="Thread not found")
+
+    is_owner = Thread.query.filter_by(thread_owner=user_id).first().thread_owner
+
+    if int(user_id) != is_owner:
+        return abort(401, description="Invalid user")
+    print(search_query)
+    print(is_owner)
+    return search_query
+
+
 @threads.route("/", methods=["GET"])
 def get_all_threads():
     threads = Thread.query.all()
@@ -52,18 +68,8 @@ def create_threads(subreddit_id):
 @threads.route("/<int:thread_id>", methods=["DELETE"])
 @jwt_required
 def delete_thread(thread_id):
-    user_id = get_jwt_identity()
 
-    thread = Thread.query.get(thread_id)
-
-    if not thread:
-        return abort(404, description="Thread not found")
-
-    is_owner = Thread.query.filter_by(thread_owner=user_id).first().thread_owner
-
-    if int(user_id) != is_owner:
-        return abort(401, description="Invalid user")
-
+    thread = check_is_thread_owner(thread_id)
 
     db.session.delete(thread)
     db.session.commit()
@@ -72,8 +78,21 @@ def delete_thread(thread_id):
 
 
 @threads.route("/<int:thread_id>", methods=["PATCH"])
+@jwt_required
 def update_thread(thread_id):
-    pass
+    # check if current user owns thread
+    thread = check_is_thread_owner(thread_id)
+    # load json from request
+    update_fields = thread_schema.load(request.json, partial=True)
+
+    # query database for thread by id
+    thread = Thread.query.filter_by(id=thread.id)
+
+    # update specific thread and commit update to database
+    thread.update(update_fields)
+    db.session.commit()
+
+    return jsonify(thread_schema.dump(thread))
 
 
 @threads.route("/<int:thread_id>/comment", methods=["POST"])
