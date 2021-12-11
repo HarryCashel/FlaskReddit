@@ -11,20 +11,40 @@ from schemas.CommentSchema import comment_schema, comments_schema
 threads = Blueprint("threads", __name__, url_prefix="/threads")
 
 
-def check_is_thread_owner(_id):
+def check_thread_exists(thread_id):
     user_id = get_jwt_identity()
 
-    search_query = Thread.query.get(_id)
+    search_query = Thread.query.get(thread_id)
     if not search_query:
         return abort(404, description="Thread not found")
+    return user_id, search_query
+
+
+def check_is_thread_owner(thread_id):
+    data = check_thread_exists(thread_id)
+    user_id = data[0]
+    thread = data[1]
 
     is_owner = Thread.query.filter_by(thread_owner=user_id).first().thread_owner
 
     if int(user_id) != is_owner:
         return abort(401, description="Invalid user")
-    print(search_query)
-    print(is_owner)
-    return search_query
+
+    return thread
+
+
+def check_member_of_subreddit(thread_id):
+    data = check_thread_exists(thread_id)
+    user_id = data[0]
+    parent_subreddit = data[1].parent_subreddit
+
+    member = SubredditMembers.query.filter_by(
+        user_id=user_id, subreddit_id=parent_subreddit
+    )
+
+    if not member.first():
+        return abort(401, description="Do not have permission")
+    return user_id
 
 
 @threads.route("/", methods=["GET"])
@@ -86,27 +106,50 @@ def update_thread(thread_id):
     update_fields = thread_schema.load(request.json, partial=True)
 
     # query database for thread by id
-    thread = Thread.query.filter_by(id=thread.id)
+    thread_object = Thread.query.filter_by(id=thread.id)
 
     # update specific thread and commit update to database
-    thread.update(update_fields)
+    thread_object.update(update_fields)
     db.session.commit()
 
     return jsonify(thread_schema.dump(thread))
 
 
 @threads.route("/<int:thread_id>/comment", methods=["POST"])
+@jwt_required
 def create_comment(thread_id):
-    pass
+    user_id = check_member_of_subreddit(thread_id)
+
+    comment_fields = comment_schema.load(request.json)
+
+    new_comment = Comment()
+    new_comment.content = comment_fields["content"]
+    new_comment.parent_thread = thread_id
+    new_comment.comment_owner = user_id
+
+    db.session.add(new_comment)
+    db.session.commit()
+
+    return jsonify(comment_schema.dump(new_comment))
 
 
 @threads.route("/<int:thread_id>/comment/<int:comment_id>", methods=["PATCH"])
+@jwt_required
 def update_comment(thread_id):
-    pass
+    user_id = get_jwt_identity()
+
+    search_query = Thread.query.get(thread_id)
+    if not search_query:
+        return abort(404, description="Thread not found")
 
 
 @threads.route("/<int:thread_id>/comment/<int:comment_id>", methods=["DELETE"])
+@jwt_required
 def delete_comment(thread_id):
-    pass
+    user_id = get_jwt_identity()
+
+    search_query = Thread.query.get(thread_id)
+    if not search_query:
+        return abort(404, description="Thread not found")
 
 

@@ -126,12 +126,13 @@ def delete_subreddits(id):
     user_id = get_jwt_identity()
     check_owner = Subreddit.query.filter_by(id=id, owner_id=user_id).first()
 
-    print(check_owner.owner_id, user_id)
-
     if int(user_id) != check_owner.owner_id:
         return abort(401, description="you don't own")
 
     subreddit = Subreddit.query.get(id)
+    threads = Thread.query.filter_by(parent_subreddit=id).all()
+    for thread in threads:
+        db.session.delete(thread)
 
     db.session.delete(subreddit)
     db.session.commit()
@@ -165,33 +166,34 @@ def join_subreddit(id):
     # subreddit_members = Subreddit.query.filter_by(joined_users=user_id)
 
     subreddit = SubredditMembers.query.filter_by(user_id=user_id, subreddit_id=id).first()
+    try:
+        if not subreddit:
+            new_member = SubredditMembers()
+            new_member.user_id = user_id
+            new_member.subreddit_id = id
 
-    if not subreddit:
-        new_member = SubredditMembers()
-        new_member.user_id = user_id
-        new_member.subreddit_id = id
+            db.session.add(new_member)
 
-        db.session.add(new_member)
+            add_to_joined_users = Subreddit.query.filter_by(id=id).first()
+            add_to_joined_users.joined_users.append(new_member)
 
-        add_to_joined_users = Subreddit.query.filter_by(id=id).first()
-        add_to_joined_users.joined_users.append(new_member)
+            add_user = User.query.filter_by(id=user_id).first()
+            add_user.joined_subreddits.append(new_member)
 
-        add_user = User.query.filter_by(id=user_id).first()
-        add_user.joined_subreddits.append(new_member)
+            db.session.commit()
 
-        db.session.commit()
-
-        return jsonify(subreddit_schema.dump(add_to_joined_users))
-    else:
-        abort(401, description="Already a member")
-    abort(404, description="Subreddit does not exist")
+            return jsonify(subreddit_schema.dump(add_to_joined_users))
+        else:
+            abort(401, description="Already a member")
+        abort(404, description="Subreddit does not exist")
+    except exc.IntegrityError:
+        return abort(404, description="Subreddit does not exist")
 
 
 @subreddits.route("/<int:id>/leave", methods=["DELETE"])
 @jwt_required
 def leave_subreddit(id):
     user_id = get_jwt_identity()
-    # subreddit_members = Subreddit.query.filter_by(joined_users=user_id)
 
     subreddit = SubredditMembers.query.filter_by(user_id=user_id, subreddit_id=id).first()
 
@@ -199,5 +201,5 @@ def leave_subreddit(id):
         return abort(401, description="Not a member of this group")
     db.session.delete(subreddit)
     db.session.commit()
-
+    #
     return jsonify(subreddit_member_schema.dump(subreddit))
