@@ -66,9 +66,11 @@ def get_all_subreddits():
     return jsonify(subreddits_schema.dump(subreddits))
 
 
-@subreddits.route("/", methods=["GET"])
-def get_all_subreddits_threads():
-    pass
+@subreddits.route("/all", methods=["GET"])
+def get_all_threads():
+    threads = Thread.query.all()
+
+    return jsonify(threads_schema.dump(threads))
 
 
 @subreddits.route("/", methods=["POST"])

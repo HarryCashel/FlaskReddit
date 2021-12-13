@@ -8,7 +8,7 @@ from models.SubredditMembers import SubredditMembers
 from schemas.ThreadSchema import thread_schema, threads_schema
 from schemas.CommentSchema import comment_schema, comments_schema
 
-threads = Blueprint("threads", __name__, url_prefix="/threads")
+threads = Blueprint("threads", __name__, url_prefix="/subreddits/<int:subreddit_id>/threads")
 
 
 def check_thread_exists(thread_id):
@@ -56,14 +56,14 @@ def check_is_comment_owner(user_id, comment_id):
 
 
 @threads.route("/", methods=["GET"])
-def get_all_threads():
-    threads = Thread.query.all()
+def get_all_threads(subreddit_id):
+    threads = Thread.query.filter_by(parent_subreddit=subreddit_id)
 
     return jsonify(threads_schema.dump(threads))
 
 
 @threads.route("/<int:thread_id>", methods=["GET"])
-def get_thread(thread_id):
+def get_thread(thread_id, subreddit_id):
     thread = Thread.query.get(thread_id)
 
     if not thread:
@@ -71,7 +71,7 @@ def get_thread(thread_id):
     return jsonify(thread_schema.dump(thread))
 
 
-@threads.route("/<int:subreddit_id>", methods=["POST"])
+@threads.route("/", methods=["POST"])
 @jwt_required
 def create_threads(subreddit_id):
     user_id = get_jwt_identity()
@@ -95,9 +95,13 @@ def create_threads(subreddit_id):
 
 @threads.route("/<int:thread_id>", methods=["DELETE"])
 @jwt_required
-def delete_thread(thread_id):
+def delete_thread(thread_id, subreddit_id):
 
     thread = check_is_thread_owner(thread_id)
+
+    comments = Comment.query.filter_by(parent_thread=thread_id).all()
+    for comment in comments:
+        db.session.delete(comment)
 
     db.session.delete(thread)
     db.session.commit()
@@ -107,7 +111,7 @@ def delete_thread(thread_id):
 
 @threads.route("/<int:thread_id>", methods=["PATCH"])
 @jwt_required
-def update_thread(thread_id):
+def update_thread(thread_id, subreddit_id):
     # check if current user owns thread
     thread = check_is_thread_owner(thread_id)
     # load json from request
@@ -125,7 +129,7 @@ def update_thread(thread_id):
 
 @threads.route("/<int:thread_id>/comment", methods=["POST"])
 @jwt_required
-def create_comment(thread_id):
+def create_comment(thread_id, subreddit_id):
     user_id = check_member_of_subreddit(thread_id)
 
     comment_fields = comment_schema.load(request.json)
@@ -143,24 +147,32 @@ def create_comment(thread_id):
 
 @threads.route("/<int:thread_id>/comment/<int:comment_id>", methods=["PATCH"])
 @jwt_required
-def update_comment(thread_id, comment_id):
+def update_comment(thread_id, comment_id, subreddit_id):
     user_id = check_member_of_subreddit(thread_id)
     comment = check_is_comment_owner(user_id=user_id, comment_id=comment_id)
-    print(comment)
+
     update_fields = comment_schema.load(request.json, partial=True)
 
     comment = Comment.query.filter_by(id=comment_id)
-    print(comment)
+
     comment.update(update_fields)
     db.session.commit()
 
-    return jsonify(comment_schema.dump(comment))
+    return jsonify(comment_schema.dump(comment[0]))
 
 
 @threads.route("/<int:thread_id>/comment/<int:comment_id>", methods=["DELETE"])
 @jwt_required
-def delete_comment(thread_id):
-    user_id = get_jwt_identity()
+def delete_comment(thread_id, comment_id, subreddit_id):
+    user_id = check_member_of_subreddit(thread_id)
+    comment = check_is_comment_owner(user_id=user_id, comment_id=comment_id)
+
+    comment = Comment.query.filter_by(id=comment_id)
+
+    db.session.delete(comment)
+    db.session.commit()
+
+    return jsonify(comment_schema.dump(comment))
 
 
 

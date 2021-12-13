@@ -93,8 +93,13 @@ def update_user():
         return abort(401, description="Invalid user")
 
     update_fields = user_schema.load(request.json, partial=True)
-
-    check_unique(update_fields["username"], update_fields["email"])
+    print(update_fields)
+    if "username" in update_fields and "email" in update_fields:
+        check_unique(update_fields["username"], update_fields["email"])
+    elif "username" in update_fields:
+        check_unique(update_fields["username"], None)
+    elif "email" in update_fields:
+        check_unique(None, update_fields["email"])
 
     for field in update_fields:
         if field == "password":
