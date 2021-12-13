@@ -32,6 +32,7 @@ I have utilised the following:
 * `flask-migrate` is used to handle database migrations during development, testing and production
 * `jwt_entended` handles some authorisation and authentication
 * `bootstrap` for the presentation of our front end. 
+* `Jinja` for templating html/css
 
 ---
 #### 3.1 Database Entity Diagram
