@@ -55,7 +55,6 @@ def check_is_comment_owner(user_id, comment_id):
     return comment
 
 
-
 @threads.route("/", methods=["GET"])
 def get_all_threads():
     threads = Thread.query.all()

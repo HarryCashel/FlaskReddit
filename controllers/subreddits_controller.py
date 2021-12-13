@@ -66,6 +66,11 @@ def get_all_subreddits():
     return jsonify(subreddits_schema.dump(subreddits))
 
 
+@subreddits.route("/", methods=["GET"])
+def get_all_subreddits_threads():
+    pass
+
+
 @subreddits.route("/", methods=["POST"])
 @jwt_required
 def create_subreddit():

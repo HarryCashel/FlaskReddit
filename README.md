@@ -41,7 +41,7 @@ I have utilised the following:
 
 ---
 #### 3.3 API Endpoints
-[raw format](docs/HarryCashel-FlaskReddit-1.0.0-resolved.yaml)
+[Raw format](docs/HarryCashel-FlaskReddit-1.0.0-resolved.yaml)
 
 [OpenApi](https://app.swaggerhub.com/apis-docs/HarryCashel/FlaskReddit/1.0.0#/)
 
@@ -49,13 +49,36 @@ I have utilised the following:
 ---
 #### 3.4 Functionalities
 
-##### **Users**
-* User registration
-* User login
-* User logout
-* View user owned subreddits/threads/comments
-* Update user details
-* Delete user account
+* Functionalities
+
+  ##### Users
+  * User registration
+  * User login
+  * User logout
+  * View user owned subreddits/threads/comments
+  * Update user details
+  * Delete user account
+
+  #### Subreddits
+  * View all subreddits
+  * Show subreddits by id
+  * Create a new subreddit
+  * Update subreddit (owner/admin)
+  * Join a subreddit
+  * Leave a subreddit (member only)
+  * Delete a subreddit (owner/admin)
+  * Get list of user joined subreddits 
+  * View all threads of specific subreddit
+  
+  #### Threads
+  * Get all threads (API only)
+  * Create thread (member of subreddit)
+  * Update thread (owner only)
+  * Delete thread (owner only)
+  * Get thread by id
+  * Create comment
+  * Update comment
+  * Delete comment
 
 
 
