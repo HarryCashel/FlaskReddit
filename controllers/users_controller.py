@@ -8,6 +8,18 @@ from datetime import timedelta
 users = Blueprint("users", __name__, url_prefix="/users")
 
 
+def check_unique(username, email):
+    user = User.query.filter_by(email=email).first()
+    username = User.query.filter_by(username=username).first()
+    if user:
+        return abort(401, description="Email already registered")
+
+    if username:
+        return abort(401, description="Username already registered")
+
+    return user
+
+
 @users.route("/all", methods=["GET"])
 def get_all_users_index():
     # Return all users
@@ -21,9 +33,12 @@ def auth_register():
     user_fields = user_schema.load(request.json)
 
     user = User.query.filter_by(email=user_fields["email"]).first()
-
+    username = User.query.filter_by(username=user_fields["username"]).first()
     if user:
         return abort(401, description="Email already registered")
+
+    if username:
+        return abort(401, description="Username already registered")
 
     user = User()
     user.email = user_fields["email"]
@@ -78,7 +93,18 @@ def update_user():
         return abort(401, description="Invalid user")
 
     update_fields = user_schema.load(request.json, partial=True)
-    user.update(update_fields)
+
+    check_unique(update_fields["username"], update_fields["email"])
+
+    for field in update_fields:
+        if field == "password":
+            user.update(
+                {"password": bcrypt.generate_password_hash(update_fields["password"]).decode("utf-8")}
+            )
+        else:
+            user.update(
+                {field: update_fields[field]}
+            )
     db.session.commit()
 
     return jsonify(user_schema.dump(user[0]))

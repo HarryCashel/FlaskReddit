@@ -10,6 +10,8 @@ from schemas.UserSchema import user_schema, users_schema
 from schemas.CommentSchema import comment_schema, comments_schema
 from schemas.ThreadSchema import thread_schema, threads_schema
 from schemas.SubredditSchema import subreddit_schema, subreddits_schema, subreddit_member_schema, subreddit_members_schema
+from sqlalchemy.orm import joinedload
+
 
 subreddits = Blueprint("subreddits", __name__, url_prefix="/subreddits")
 
@@ -59,7 +61,7 @@ def is_owner(sub_id):
 @subreddits.route("/", methods=["GET"])
 def get_all_subreddits():
     # return all subreddits
-    subreddits = Subreddit.query.all()
+    subreddits = Subreddit.query.options(joinedload("user"))
 
     return jsonify(subreddits_schema.dump(subreddits))
 

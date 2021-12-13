@@ -47,6 +47,15 @@ def check_member_of_subreddit(thread_id):
     return user_id
 
 
+def check_is_comment_owner(user_id, comment_id):
+    comment = Comment.query.filter_by(id=comment_id).first()
+
+    if int(comment.comment_owner) != int(user_id):
+        return abort(401, description="Do not have permission")
+    return comment
+
+
+
 @threads.route("/", methods=["GET"])
 def get_all_threads():
     threads = Thread.query.all()
@@ -135,12 +144,18 @@ def create_comment(thread_id):
 
 @threads.route("/<int:thread_id>/comment/<int:comment_id>", methods=["PATCH"])
 @jwt_required
-def update_comment(thread_id):
-    user_id = get_jwt_identity()
+def update_comment(thread_id, comment_id):
+    user_id = check_member_of_subreddit(thread_id)
+    comment = check_is_comment_owner(user_id=user_id, comment_id=comment_id)
+    print(comment)
+    update_fields = comment_schema.load(request.json, partial=True)
 
-    search_query = Thread.query.get(thread_id)
-    if not search_query:
-        return abort(404, description="Thread not found")
+    comment = Comment.query.filter_by(id=comment_id)
+    print(comment)
+    comment.update(update_fields)
+    db.session.commit()
+
+    return jsonify(comment_schema.dump(comment))
 
 
 @threads.route("/<int:thread_id>/comment/<int:comment_id>", methods=["DELETE"])
@@ -148,8 +163,5 @@ def update_comment(thread_id):
 def delete_comment(thread_id):
     user_id = get_jwt_identity()
 
-    search_query = Thread.query.get(thread_id)
-    if not search_query:
-        return abort(404, description="Thread not found")
 
 
