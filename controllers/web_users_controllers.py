@@ -20,3 +20,6 @@ def unauthorised():
     return redirect(url_for('web_users.web_users_login'))
 
 
+@web_users.route("/")
+def home():
+    return render_template("index.html")
