@@ -6,34 +6,85 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
+    <link rel="stylesheet" href="../static/styles.css">
     <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
-<div class="navbar-container">
-<nav class="navbar navbar-expand-lg navbar-light bg-dark">
-  <a class="navbar-brand" href="#">Navbar w/ text</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarText">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Features</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Pricing</a>
-      </li>
-    </ul>
-    <span class="navbar-text">
-      Navbar text with an inline element
-    </span>
-  </div>
-</nav>
-</div>
+
+        <!-- navbar -->
+
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+{#            <div class="d-flex justify-content-between">#}
+                <a class="navbar-brand" href="#">
+                    <img src="../static/img/reddit.png" width="30" height="30" class="d-inline-block align-top" alt="">
+                    FlaskReddit
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <!-- Jinja template for communities user has joined - only show if logged in -->
+                        {% if user == None %}
+                    <ul class="navbar-nav mx-auto">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <img src="../static/img/home.png" width="24" height="24" class="d-inline-block align-top" alt="">
+                                Home
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="#">Example</a>
+                            </div>
+                        </li>
+                    </ul>
+                    {% endif %}
+                    <!-- End template for user communities -->
+                    <ul class="navbar-nav mx-auto">
+
+                        <li class="nav-item">
+                            <form class="form-inline my-2 my-lg-0 d-flex justify-content-start">
+                                <input class="form-control mr-sm-2 bg-dark text-white" type="search" placeholder="Search FlaskReddit" aria-label="Search">
+                                <button class="btn btn-sm btn-outline-secondary" type="button">Search</button>
+                            </form>
+                        </li>
+                    </ul>
+                    <!-- If no user show login/signup buttons -->
+                    <ul class="navbar-nav mx-auto">
+                        <li class="nav-item">
+                            <a class="btn btn-outline-secondary btn-sm" href="#">Sign Up</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-outline-secondary btn-sm" href="#">Log In</a>
+                        </li>
+                        <!-- End template for login/signup buttons-->
+                    </ul>
+{#                    <ul class="navbar-nav mx-auto">#}
+{#                        #}
+{#                    </ul>#}
+                    <!-- -->
+                    {% if user == None %}
+
+                    <ul class="navbar-nav mx-auto" >
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                [Username]
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="#">profile</a>
+                                <a class="dropdown-item" href="#">settings</a>
+                                <a class="dropdown-item" href="#">create a community</a>
+                                <a class="dropdown-item" href="#">Log Out</a>
+                            </div>
+                        </li>
+                    </ul>
+                    {% endif %}
+                </div>
+{#            </div>#}
+        </nav>
+        </div>
+
+
+
 
     {% block content %}
     {% endblock %}
