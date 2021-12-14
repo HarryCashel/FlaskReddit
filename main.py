@@ -8,12 +8,15 @@ from flask_marshmallow import Marshmallow
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
+from flask_login import LoginManager
+
 
 db = SQLAlchemy()
 ma = Marshmallow()
 migrate = Migrate()
 bcrypt = Bcrypt()
 jwt = JWTManager()
+login_manager = LoginManager()
 
 
 def create_app():
@@ -25,6 +28,7 @@ def create_app():
     migrate.init_app(app, db)
     bcrypt.init_app(app)
     jwt.init_app(app)
+    login_manager.init_app(app)
 
     from commands import db_commands
     app.register_blueprint(db_commands)
