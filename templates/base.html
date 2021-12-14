@@ -25,7 +25,7 @@
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Jinja template for communities user has joined - only show if logged in -->
-                        {% if user == None %}
+                        {% if current_user.is_authenticated %}
                     <ul class="navbar-nav mx-auto">
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -49,6 +49,7 @@
                         </li>
                     </ul>
                     <!-- If no user show login/signup buttons -->
+                {% if not current_user.is_authenticated %}
                     <ul class="navbar-nav mx-auto">
                         <li class="nav-item">
                             <a class="btn btn-outline-secondary btn-sm" href="#">Sign Up</a>
@@ -58,12 +59,13 @@
                         </li>
                         <!-- End template for login/signup buttons-->
                     </ul>
+                {% endif %}
 {#                    <ul class="navbar-nav mx-auto">#}
 {#                        #}
 {#                    </ul>#}
                     <!-- -->
-                    {% if user == None %}
 
+                    {% if current_user.is_authenticated %}
                     <ul class="navbar-nav mx-auto" >
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

@@ -9,6 +9,7 @@ from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 from flask_login import LoginManager
+from flask_bootstrap import Bootstrap
 
 
 db = SQLAlchemy()
@@ -17,6 +18,7 @@ migrate = Migrate()
 bcrypt = Bcrypt()
 jwt = JWTManager()
 login_manager = LoginManager()
+bootstrap = Bootstrap()
 
 
 def create_app():
@@ -29,6 +31,7 @@ def create_app():
     bcrypt.init_app(app)
     jwt.init_app(app)
     login_manager.init_app(app)
+    bootstrap.init_app(app)
 
     from commands import db_commands
     app.register_blueprint(db_commands)
