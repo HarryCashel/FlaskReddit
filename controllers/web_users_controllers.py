@@ -1,6 +1,10 @@
+import werkzeug.security
+
 from models.User import User
 from models.Subreddit import Subreddit
+from models.Thread import Thread
 from models.SubredditMembers import SubredditMembers
+from forms import LoginForm, RegisterForm
 from main import db, login_manager, bootstrap
 from schemas.UserSchema import user_schema
 from flask import Blueprint, render_template, flash, redirect, url_for, abort, request
@@ -24,13 +28,34 @@ def unauthorised():
 
 def get_subreddits():
     """Returns a list of subreddits to present on the home page (and in the future on sidebars etc)"""
-    subreddits = Subreddit.query.filter(Subreddit.id != 1)[:25]
+    subreddits = Subreddit.query.filter(Subreddit.id != 1)[:5]
     return subreddits
 
 
-@web_users.route("/")
-def home():
-    top_subreddits = get_subreddits()
-    user = load_user(current_user.get_id())
+def get_threads():
+    """Returns a list of threads to present on the home page"""
+    threads = Thread.query.filter(Thread.id != 1)[:25]
+    return threads
 
-    return render_template("index.html", subreddits=top_subreddits)
+
+@web_users.route("/", methods=["GET", "POST"])
+def home():
+    subreddits = (get_subreddits())
+    threads = get_threads()
+    login_form = LoginForm()
+    signup_form = RegisterForm()
+
+    if request.method == "POST" and login_form.validate_on_submit():
+        new_user = User()
+        new_user.email = login_form.email.data
+        new_user.password = werkzeug.security.generate_password_hash(login_form.password.data)
+
+        db.session.add(new_user)
+        db.session.commit()
+
+    if request.method == "POST" and signup_form.validate_on_submit():
+        pass
+
+    return render_template(
+        "index.html", subreddits=subreddits, threads=threads, login_form=login_form, signup_form=signup_form
+    )
