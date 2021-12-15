@@ -22,6 +22,7 @@ def seed_db():
     from models.User import User
     from models.Subreddit import Subreddit
     from models.SubredditMembers import SubredditMembers
+    from models.Thread import Thread
     from faker import Faker
     from main import bcrypt
     import random
@@ -29,6 +30,7 @@ def seed_db():
     faker = Faker()
     users = []
     subreddits = []
+    member = []
 
     for i in range(5):
         user = User()
@@ -56,13 +58,17 @@ def seed_db():
 
     db.session.commit()
 
-    # for i in range(5):
-    #     new_member = SubredditMembers()
-    #     new_member.user_id = random.choice(users).id
-    #     new_member.subreddit_id = random.choice(subreddits).id
-    #
-    #     db.session.add(new_member)
-    #
-    # db.session.commit()
+    for i in range(30):
+        owner = random.choice(users).id
+        sub_id = Subreddit.query.filter_by(owner_id=owner).first()
+        thread = Thread()
+        thread.title = faker.catch_phrase()
+        thread.content = faker.paragraph(nb_sentences=2)
+        thread.thread_owner = owner
+        thread.parent_subreddit = sub_id.id
+
+        db.session.add(thread)
+
+    db.session.commit()
 
     print("Tables seeded")
