@@ -17,6 +17,15 @@ class Config(object):
 
         return value
 
+    @property
+    def SECRET_KEY(self):
+        key = os.getenv("SECRET_KEY")
+
+        if not key:
+            raise ValueError("SECRET_KEY is not set")
+
+        return key
+
 
 class DevelopmentConfig(Config):
     DEBUG = True
@@ -44,6 +53,15 @@ class TestingConfig(Config):
             raise ValueError("DB_TEST_URI is not set")
 
         return value
+
+    @property
+    def SECRET_KEY(self):
+        key = os.getenv("SECRET_KEY")
+
+        if not key:
+            raise ValueError("SECRET_KEY is not set")
+
+        return key
 
 
 environment = os.getenv("FLASK_ENV")
