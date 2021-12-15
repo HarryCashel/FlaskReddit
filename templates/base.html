@@ -52,10 +52,10 @@
                 {% if not current_user.is_authenticated %}
                     <ul class="navbar-nav mx-auto">
                         <li class="nav-item">
-                            <a class="btn btn-outline-secondary btn-sm" href="#">Sign Up</a>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" data-toggle="modal" data-target="#loginModal">Log in</button>
                         </li>
                         <li class="nav-item">
-                            <a class="btn btn-outline-secondary btn-sm" href="#">Log In</a>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" data-toggle="modal" data-target="#signupModal">Sign Up</button>
                         </li>
                         <!-- End template for login/signup buttons-->
                     </ul>
@@ -84,6 +84,7 @@
 {#            </div>#}
         </nav>
         </div>
+
 
 
 
