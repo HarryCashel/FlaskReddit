@@ -4,7 +4,7 @@ from models.User import User, UserMixin
 from models.Subreddit import Subreddit
 from models.Thread import Thread
 from models.SubredditMembers import SubredditMembers
-from forms import LoginForm, RegisterForm
+from forms import LoginForm, RegisterForm, CreateSubreddit, CreateThread
 from main import db, login_manager, bootstrap
 from schemas.UserSchema import user_schema
 from flask import Blueprint, render_template, flash, redirect, url_for, abort, request
@@ -44,6 +44,8 @@ def home():
     threads = get_threads()
     login_form = LoginForm()
     register_form = RegisterForm()
+    subreddit_form = CreateSubreddit()
+    thread_form = CreateThread()
 
     # check if login form is valid and submitted
     if request.method == "POST" and login_form.validate_on_submit():
@@ -56,7 +58,8 @@ def home():
             login_user(user)
             flash("Success")
             return redirect(url_for("web_users.home"))
-        flash("Invalid credentials.")
+        else:
+            flash("Invalid credentials.")
 
     if request.method == "POST" and register_form.validate_on_submit():
         email = register_form.email.data
@@ -76,7 +79,9 @@ def home():
             flash("Success")
             return redirect(url_for("web_users.home"))
 
-    return render_template("index.html", subreddits=subreddits, threads=threads, current_user=current_user, login_form=login_form, register_form=register_form)
+    return render_template("index.html", subreddits=subreddits, threads=threads,
+                           current_user=current_user, login_form=login_form, register_form=register_form,
+                           subreddit_form=subreddit_form, thread_form=thread_form)
 
 
 @web_users.route("/login", methods=["GET", "POST"])
