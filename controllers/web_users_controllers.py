@@ -1,6 +1,6 @@
 import werkzeug.security
 
-from models.User import User
+from models.User import User, UserMixin
 from models.Subreddit import Subreddit
 from models.Thread import Thread
 from models.SubredditMembers import SubredditMembers
@@ -23,7 +23,7 @@ def load_user(user_id):
 @login_manager.unauthorized_handler
 def unauthorised():
     flash("You must be logged in to view this page")
-    return redirect(url_for('web_users.web_users_login'))
+    return redirect(url_for('home'))
 
 
 def get_subreddits():
@@ -40,22 +40,87 @@ def get_threads():
 
 @web_users.route("/", methods=["GET", "POST"])
 def home():
-    subreddits = (get_subreddits())
+    subreddits = get_subreddits()
     threads = get_threads()
     login_form = LoginForm()
-    signup_form = RegisterForm()
+    register_form = RegisterForm()
 
+    # check if login form is valid and submitted
     if request.method == "POST" and login_form.validate_on_submit():
-        new_user = User()
-        new_user.email = login_form.email.data
-        new_user.password = werkzeug.security.generate_password_hash(login_form.password.data)
+        email = login_form.email.data
 
-        db.session.add(new_user)
-        db.session.commit()
+        # check email exists in db
+        user = User.query.filter_by(email=email).first()
 
-    if request.method == "POST" and signup_form.validate_on_submit():
-        pass
+        if user and user.check_password(login_form.password.data):
+            login_user(user)
+            flash("Success")
+            return redirect(url_for("web_users.home"))
+        flash("Invalid credentials.")
 
-    return render_template(
-        "index.html", subreddits=subreddits, threads=threads, login_form=login_form, signup_form=signup_form
-    )
+    if request.method == "POST" and register_form.validate_on_submit():
+        email = register_form.email.data
+
+        user = User.query.filter_by(email=email).first()
+
+        if not user:
+            new_user = User()
+            new_user.email = register_form.email.data
+            new_user.set_password(register_form.password.data)
+            new_user.username = register_form.username.data
+
+            db.session.add(new_user)
+            db.session.commit()
+
+            login_user(new_user)
+            flash("Success")
+            return redirect(url_for("web_users.home"))
+
+    return render_template("index.html", subreddits=subreddits, threads=threads, current_user=current_user, login_form=login_form, register_form=register_form)
+
+
+@web_users.route("/login", methods=["GET", "POST"])
+def login():
+    form = LoginForm()
+
+    if request.method == "POST" and form.validate_on_submit():
+        email = form.email.data
+        password = form.password.data
+
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            flash("Invalid credentials. Please try again")
+        if user:
+            if user.check_password(password=password):
+                login_user(user)
+                flash("Successfully logged in")
+                return redirect(url_for('web_users.home'))
+    return render_template("login.html", form=form)
+
+
+@web_users.route("/signup", methods=["GET", "POST"])
+def signup():
+    form = RegisterForm()
+
+    if request.method == "POST" and form.validate_on_submit():
+        email = form.email.data
+        print(form.password)
+        print(form.password.data)
+        user = User.query.filter_by(email=email).first()
+
+        if not user:
+            new_user = User()
+            new_user.email = form.email.data
+            new_user.username = form.username.data
+            new_user.set_password(form.password.data)
+            db.session.add(new_user)
+            db.session.commit()
+
+            login_user(new_user)
+            return redirect(url_for('web_users.home'))
+
+        flash("Email in use. Please sign in")
+        return redirect(url_for('login'))
+
+    return render_template("signup.html", form=form)
+
