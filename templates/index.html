@@ -4,13 +4,41 @@
 {% block title %}Home Page{% endblock %}
 {% block content %}
 
+    <!-- modals -->
+
+    <div class="modal fade" id="threadModal" tabindex="-1" role="dialog" aria-labelledby="threadModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="form">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="threadModalTitle">Create a post</h4>
+                </div>
+                <div class="modal-body">
+                    {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                    {% for message in messages: %}
+                    {{ message }}
+                    {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                    {{ wtf.quick_form(thread_form, button_map={"submit_button": "outline-secondary"}) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
 <div class="container">
 <div class="row">
-    <div class="col-6 ml-auto ">
+    <div class=" main-content-container col-6 ml-auto">
         <div>
+            <div class="card bg-transparent border-secondary mb-3 ml-auto">
+                <div class="card-body">
+                    <img src="../static/img/reddit.png" width="30" height="30" alt="">
+                    <input class="w-75 ml-auto" type="text" data-toggle="modal" placeholder="Create a post" data-target="#threadModal">
+                </div>
+            </div>
 
         {% for thread in threads: %}
-            <div class="card bg-transparent border-secondary mb-3" style="max-width: 45rem;">
+            <div class="card bg-transparent border-secondary mb-3 ml-auto" style="max-width: 65rem;">
                 <div class="row no-gutters">
                     {% if thread.id % 2 == 0: %}
                     <div class="col-lg-4">
@@ -31,7 +59,7 @@
         {% endfor %}
         </div>
     </div>
-    <div class="col-6 mr-auto">
+    <div class="media-sidebar-container col-6 mr-auto d-none d-md-block">
         <div>
             <div id="home-sidebar">
                 <div class="card bg-transparent border-secondary" style="max-width: 20rem;">
