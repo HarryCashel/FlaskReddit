@@ -11,6 +11,50 @@
 </head>
 <body>
 
+    <!-- Modals -->
+    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="form">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="loginModalTitle">Log In</h4>
+                </div>
+                <div class="modal-body">
+                    {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                    {% for message in messages: %}
+                    {{ message }}
+                    {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                    {{ wtf.quick_form(login_form, button_map={"submit_button": "outline-secondary"}) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="form">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="registerModalTitle">Sign Up</h4>
+                </div>
+                <div class="modal-body">
+                    {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                    {% for message in messages: %}
+                    {{ message }}
+                    {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                    {{ wtf.quick_form(register_form, button_map={"submit_button": "outline-secondary"}) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
         <!-- navbar -->
 
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -53,9 +97,11 @@
                     <ul class="navbar-nav mx-auto">
                         <li class="nav-item">
                             <button type="button" class="btn btn-outline-secondary btn-sm" data-toggle="modal" data-target="#loginModal">Log in</button>
+{#                            <a type="button" class="btn btn-outline-secondary btn-sm" href="login">Log In</a>#}
                         </li>
                         <li class="nav-item">
-                            <button type="button" class="btn btn-outline-secondary btn-sm" data-toggle="modal" data-target="#signupModal">Sign Up</button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" data-toggle="modal" data-target="#registerModal">Sign Up</button>
+{#                            <a type="button" class="btn btn-outline-secondary btn-sm" href="signup">Sign Up</a>#}
                         </li>
                         <!-- End template for login/signup buttons-->
                     </ul>
@@ -69,7 +115,7 @@
                     <ul class="navbar-nav mx-auto" >
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                [Username]
+                                {{ current_user.username }}
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" href="#">profile</a>
