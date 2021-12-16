@@ -1,6 +1,22 @@
+/*Media screens*/
+
+@media only screen and (max-width: 768px){
+    .main-content-container {
+        margin: auto !important;
+    }
+}
+
+/*Body*/
+
 body{
     background-color: black;
 }
+
+hr { display: block; height: 1px;
+    border: 0; border-top: 1px solid #ccc;
+    margin: 1em 0; padding: 0; }
+
+/*Navbar*/
 
 .navbar {
     padding: .5%;
@@ -14,9 +30,7 @@ body{
 
 }
 
-hr { display: block; height: 1px;
-    border: 0; border-top: 1px solid #ccc;
-    margin: 1em 0; padding: 0; }
+
 
 
 /*Log In & Sign Up modal css*/
