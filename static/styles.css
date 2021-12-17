@@ -16,6 +16,24 @@ hr { display: block; height: 1px;
     border: 0; border-top: 1px solid #ccc;
     margin: 1em 0; padding: 0; }
 
+/*Homepage cards*/
+/*Navbar*/
+/*Background colours*/
+.create-post-card,
+.thread-card,
+.top-communities-card,
+.navbar,
+.nav-searchbar,
+.create-post-text,
+.premium-card,
+.create-post-community-sidebar {
+    background-color: #1A1A1B !important;
+}
+
+.create-post-text {
+    color: #1A1A1B !important;
+}
+
 /*Navbar*/
 
 .navbar {
@@ -30,8 +48,12 @@ hr { display: block; height: 1px;
 
 }
 
+/*Buttons*/
 
-
+/*.premium-button,*/
+/*.view-all-communities {*/
+/*    margin: auto !important;*/
+/*}*/
 
 /*Log In & Sign Up modal css*/
 

@@ -10,7 +10,7 @@
         <div class="modal-dialog modal-dialog-centered modal-lg" role="form">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="threadModalTitle">Create a post</h4>
+                    <h4 class="create-post-text modal-title" id="threadModalTitle">Create a post</h4>
                 </div>
                 <div class="modal-body">
                     {% with messages = get_flashed_messages() %}
@@ -27,10 +27,10 @@
     </div>
 
 <div class="container">
-<div class="row">
-    <div class=" main-content-container col-6 ml-auto">
+<div class="row m-auto">
+    <div class="main-content-container col-6 ml-auto">
         <div>
-            <div class="card bg-transparent border-secondary mb-3 ml-auto">
+            <div class="create-post-card card border-dark mb-3 ml-auto">
                 <div class="card-body">
                     <img src="../static/img/reddit.png" width="30" height="30" alt="">
                     <input class="w-75 ml-auto" type="text" data-toggle="modal" placeholder="Create a post" data-target="#threadModal">
@@ -38,7 +38,7 @@
             </div>
 
         {% for thread in threads: %}
-            <div class="card bg-transparent border-secondary mb-3 ml-auto" style="max-width: 65rem;">
+            <div class="thread-card card border-dark mb-3 ml-auto" style="max-width: 65rem;">
                 <div class="row no-gutters">
                     {% if thread.id % 2 == 0: %}
                     <div class="col-lg-4">
@@ -50,7 +50,7 @@
                             <h5 class="card-title mb-3">{{ thread.title }}</h5>
                             <p class="card-text">{{ thread.content }}</p>
                         </div>
-                        <div class="card-footer bg-transparent border-secondary">
+                        <div class="card-footer bg-transparent border-dark">
                             <a href="#" class="btn btn-outline-secondary">Comment area</a>
                         </div>
                     </div>
@@ -61,21 +61,49 @@
     </div>
     <div class="media-sidebar-container col-6 mr-auto d-none d-md-block">
         <div>
-            <div id="home-sidebar">
-                <div class="card bg-transparent border-secondary" style="max-width: 20rem;">
+            <div id="home-sidebar mb-3">
+                <div class="top-communities-card card border-dark mb-3 p-3" style="max-width: 20rem;">
                     <img src="../static/img/placeholder.png" class="card-img-top">
-                    <div class="card-img-overlay d-flex flex-column">
+                    <div class="card-img-overlay">
                         <div class="text-white">Top Communities</div>
                     </div>
 
-                    <ol class="mt-auto">
+                    <ol class="text-center mt-auto">
                         {% for subreddit in subreddits: %}
-                        <p class="text-white">/r/subreddit_name</p>
+                        <p class="text-white">r/{{ subreddit.name }}</p>
                             <hr>
                         {% endfor %}
+                        <a href="#" class="w-100 btn btn-outline-danger text-black">View All</a>
                     </ol>
                 </div>
             </div>
+            <div id="premium-sidebar mb-3">
+                <div class="premium-card card border-dark mb-3" style="max-width: 20rem;">
+                    <div class="card-body text-center text-white">
+                        <h6 class="card-title">FlaskReddit Premium</h6>
+                        <p class="card-text">Sign up for the best experience!</p>
+                        <a href="#" class="w-100 premium-button btn btn-outline-danger text-black">Sign Up</a>
+                    </div>
+                </div>
+            </div>
+            <div id="create-post-community-sidebar">
+                <div class="create-post-community-sidebar card border-dark mb-3 p-3" style="max-width: 20rem;">
+                    <img src="../static/img/placeholder.png" class="card-img-top" style="max-height: 5rem;" alt="">
+                    <div class="mb-3 card-body text-center text-white">
+                        <h6 class="card-title">Home</h6>
+                        <p class="card-text">Your personal FlaskReddit card. Create posts and communities.</p>
+                        <a href="#" class="mb-3 w-100 premium-button btn btn-outline-danger text-black">Create post</a>
+                        <a href="#" class="w-100 premium-button btn btn-outline-danger text-black">Create community</a>
+                    </div>
+                </div>
+            </div>
+            <div id="nav-help-sidebar">
+
+            </div>
+            <div id="premium-sidebar">
+
+            </div>
+
         </div>
     </div>
 </div>
