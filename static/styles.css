@@ -3,8 +3,11 @@
 @media only screen and (max-width: 768px){
     .main-content-container {
         margin: auto !important;
+        min-width: 30rem;
+        max-width: 40rem;
     }
 }
+
 
 /*Body*/
 
@@ -26,7 +29,9 @@ hr { display: block; height: 1px;
 .nav-searchbar,
 .create-post-text,
 .premium-card,
-.create-post-community-sidebar {
+.create-post-community-sidebar,
+.sidebar-nav-help,
+.dropdown-menu {
     background-color: #1A1A1B !important;
 }
 
@@ -44,8 +49,30 @@ hr { display: block; height: 1px;
     margin-right: 40px;
 }
 
-#usersettings {
 
+.dropdown-menu a:hover {
+    color: #000 !important;
+}
+
+.dropdown-menu a:active {
+    color: #fff !important;
+}
+
+.user_setting .dropdown-item,
+.home-navbar .dropdown-item {
+    font-size: 12px;
+}
+
+/*Sidebar Homepage*/
+.sidebar-nav-help a {
+    display: inline-block !important;
+    text-decoration: none !important;
+    font-size: 8px !important;
+}
+
+/*Makes link in top communities sidebar clickable*/
+.card-link {
+    position: relative;
 }
 
 /*Buttons*/

@@ -42,7 +42,7 @@
                 <div class="row no-gutters">
                     {% if thread.id % 2 == 0: %}
                     <div class="col-lg-4">
-                        <img src="../static/img/placeholder.png" class="card-img-top" alt="...">
+                        <img src="../static/img/placeholder.png" class="thread-img card-img-top" alt="...">
                     </div>
                     {% endif %}
                     <div class="col-md-8">
@@ -69,11 +69,13 @@
                     </div>
 
                     <ol class="text-center mt-auto">
+
                         {% for subreddit in subreddits: %}
-                        <p class="text-white">r/{{ subreddit.name }}</p>
+                        <!-- Will be an anchor tag to link to the 5 most popular subreddit pages -->
+                            <a href="#" class="card-link text-white">r/{{ subreddit.name }}</a>
                             <hr>
                         {% endfor %}
-                        <a href="#" class="w-100 btn btn-outline-danger text-black">View All</a>
+
                     </ol>
                 </div>
             </div>
@@ -92,18 +94,32 @@
                     <div class="mb-3 card-body text-center text-white">
                         <h6 class="card-title">Home</h6>
                         <p class="card-text">Your personal FlaskReddit card. Create posts and communities.</p>
-                        <a href="#" class="mb-3 w-100 premium-button btn btn-outline-danger text-black">Create post</a>
+                        <a href="#" class="mb-1 w-100 premium-button btn btn-outline-danger text-black">Create post</a>
                         <a href="#" class="w-100 premium-button btn btn-outline-danger text-black">Create community</a>
                     </div>
                 </div>
             </div>
             <div id="nav-help-sidebar">
-
+                <div class="sidebar-nav-help card border-dark mb-3 p-3" style="max-width: 20rem;">
+                    <div class="row">
+                        <div class="mx-auto col-6">
+                            <a href="#">Help</a>
+                            <a href="#">FlaskReddit Premium</a>
+                            <a href="#">FlaskReddit Premium</a>
+                            <a href="#">FlaskReddit Gifts</a>
+                            <a href="#">Communities</a>
+                        </div>
+                        <div class="mx-auto col-6">
+                            <a href="#">About</a>
+                            <a href="#">Careers</a>
+                            <a href="#">Advertise</a>
+                            <a href="#">Terms</a>
+                            <a href="#">Content Policy</a>
+                            <a href="#">Privacy Policy</a>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div id="premium-sidebar">
-
-            </div>
-
         </div>
     </div>
 </div>

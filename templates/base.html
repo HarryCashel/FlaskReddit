@@ -79,8 +79,14 @@
                                 <img src="../static/img/home.png" width="24" height="24" class="d-inline-block align-top" alt="">
                                 Home
                             </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="#">Example</a>
+                            <div class="home-navbar dropdown-menu text-white" aria-labelledby="navbarDropdown">
+                            <h6>My Communities</h6>
+                                {% for reddit in reddits: %}
+                                <!-- Will be an a tag to link to each subreddit page -->
+                                    <a class="dropdown-item text-white" href="#">r/{{ reddit.name }}</a>
+                                    <hr>
+                                {% endfor %}
+
                             </div>
                         </li>
                     </ul>
@@ -120,11 +126,11 @@
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 {{ current_user.username }}
                             </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="#">profile</a>
-                                <a class="dropdown-item" href="#">settings</a>
-                                <a class="dropdown-item" href="#">create a community</a>
-                                <a class="dropdown-item" href="#">Log Out</a>
+                            <div class="user_setting dropdown-menu text-white" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item text-white" href="#">profile</a>
+                                <a class="dropdown-item text-white" href="#">settings</a>
+                                <a class="dropdown-item text-white" href="#">create a community</a>
+                                <a class="dropdown-item text-white" href="{{ url_for('web_users.logout') }}">Log Out</a>
                             </div>
                         </li>
                     </ul>

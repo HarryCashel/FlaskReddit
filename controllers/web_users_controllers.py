@@ -38,6 +38,16 @@ def get_threads():
     return threads
 
 
+def get_user_subreddits():
+    """Returns list of subreddits user has joined"""
+    if current_user.is_authenticated:
+
+        user_id = current_user.get_id()
+        member_of = SubredditMembers.query.filter_by(user_id=user_id).all()
+        reddits = [Subreddit.query.filter_by(id=reddit_id) for reddit_id in member_of]
+        return reddits
+
+
 @web_users.route("/", methods=["GET", "POST"])
 def home():
     subreddits = get_subreddits()
@@ -46,6 +56,13 @@ def home():
     register_form = RegisterForm()
     subreddit_form = CreateSubreddit()
     thread_form = CreateThread()
+    user_id = current_user.get_id()
+    member_of = SubredditMembers.query.filter_by(user_id=user_id).all()
+    if member_of:
+        reddits = [Subreddit.query.filter_by(id=entry.subreddit_id).first() for entry in member_of]
+
+    else:
+        reddits = None
 
     # check if login form is valid and submitted
     if request.method == "POST" and login_form.validate_on_submit():
@@ -81,7 +98,7 @@ def home():
 
     return render_template("index.html", subreddits=subreddits, threads=threads,
                            current_user=current_user, login_form=login_form, register_form=register_form,
-                           subreddit_form=subreddit_form, thread_form=thread_form)
+                           subreddit_form=subreddit_form, thread_form=thread_form, reddits=reddits)
 
 
 @web_users.route("/login", methods=["GET", "POST"])
@@ -129,3 +146,9 @@ def signup():
 
     return render_template("signup.html", form=form)
 
+
+@web_users.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for("web_users.home"))
