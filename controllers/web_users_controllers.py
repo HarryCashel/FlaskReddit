@@ -97,11 +97,22 @@ def home():
             flash("Success")
             return redirect(url_for("web_users.home"))
 
-    thread_form.parent_subreddit.choices = [(g.id, g.name) for g in reddits]
+    if user_id:
+
+        thread_form.parent_subreddit.choices = [(g.id, g.name) for g in reddits]
     if request.method == "POST" and thread_form.validate_on_submit():
-        choice = thread_form.parent_subreddit
-        title = thread_form.title
-        content = thread_form.content
+        choice = thread_form.parent_subreddit.data
+        title = thread_form.title.data
+        content = thread_form.content.data
+
+        new_post = Thread()
+        new_post.parent_subreddit = choice
+        new_post.title = title
+        new_post.content = content
+        new_post.thread_owner = user_id
+
+        db.session.add(new_post)
+        db.session.commit()
 
 
 
