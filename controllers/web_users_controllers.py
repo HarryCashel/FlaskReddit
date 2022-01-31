@@ -56,6 +56,7 @@ def home():
     register_form = RegisterForm()
     subreddit_form = CreateSubreddit()
     thread_form = CreateThread()
+
     user_id = current_user.get_id()
     member_of = SubredditMembers.query.filter_by(user_id=user_id).all()
     if member_of:
@@ -96,6 +97,15 @@ def home():
             flash("Success")
             return redirect(url_for("web_users.home"))
 
+    thread_form.parent_subreddit.choices = [(g.id, g.name) for g in reddits]
+    if request.method == "POST" and thread_form.validate_on_submit():
+        choice = thread_form.parent_subreddit
+        title = thread_form.title
+        content = thread_form.content
+
+
+
+
     return render_template("index.html", subreddits=subreddits, threads=threads,
                            current_user=current_user, login_form=login_form, register_form=register_form,
                            subreddit_form=subreddit_form, thread_form=thread_form, reddits=reddits)
@@ -126,8 +136,6 @@ def signup():
 
     if request.method == "POST" and form.validate_on_submit():
         email = form.email.data
-        print(form.password)
-        print(form.password.data)
         user = User.query.filter_by(email=email).first()
 
         if not user:

@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, BooleanField, PasswordField, SubmitField, EmailField, URLField
+from wtforms import StringField, BooleanField, PasswordField, SubmitField, EmailField, URLField, SelectField
 from wtforms.validators import DataRequired, URL, Email, Length, EqualTo
 
 
@@ -43,6 +43,7 @@ class UpdateSubreddit(FlaskForm):
 # Thread forms
 
 class CreateThread(FlaskForm):
+    parent_subreddit = SelectField(u"Subreddits", validators=[DataRequired()])
     title = StringField("Title", validators=[DataRequired(), Length(min=1)])
     content = StringField("Content", validators=[DataRequired(), Length(min=1)])
     submit = SubmitField("Post")

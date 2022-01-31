@@ -10,16 +10,9 @@
         <div class="modal-dialog modal-dialog-centered modal-lg" role="form">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="create-post-text modal-title" id="threadModalTitle">Create a post</h4>
+                    <h4 class="create-post-text modal-title text-white" id="threadModalTitle">Create a post</h4>
                 </div>
                 <div class="modal-body">
-                    {% with messages = get_flashed_messages() %}
-                    {% if messages %}
-                    {% for message in messages: %}
-                    {{ message }}
-                    {% endfor %}
-                    {% endif %}
-                {% endwith %}
                     {{ wtf.quick_form(thread_form, button_map={"submit_button": "outline-secondary"}) }}
                 </div>
             </div>
@@ -28,15 +21,18 @@
 
 <div class="container">
 <div class="row m-auto">
+
     <div class="main-content-container col-6 ml-auto">
+
         <div>
+        {% if current_user.is_authenticated %}
             <div class="create-post-card card border-dark mb-3 ml-auto">
                 <div class="card-body">
                     <img src="../static/img/reddit.png" width="30" height="30" alt="">
                     <input class="w-75 ml-auto" type="text" data-toggle="modal" placeholder="Create a post" data-target="#threadModal">
                 </div>
             </div>
-
+            {% endif %}
         {% for thread in threads: %}
             <div class="thread-card card border-dark mb-3 ml-auto" style="max-width: 65rem;">
                 <div class="row no-gutters">

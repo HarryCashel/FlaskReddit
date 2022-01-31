@@ -12,6 +12,19 @@
 <body>
 
     <!-- Modals -->
+    <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="form">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="loginModalTitle">Log In</h4>
+                </div>
+                <div class="modal-body">
+                    {{ wtf.quick_form(login_form, button_map={"submit_button": "outline-secondary"}) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="form">
             <div class="modal-content">
@@ -80,12 +93,15 @@
                                 Home
                             </a>
                             <div class="home-navbar dropdown-menu text-white" aria-labelledby="navbarDropdown">
+                            <h6 class="dropdown-item text-white">Create Community</h6>
+                            {% if reddits %}
                             <h6>My Communities</h6>
                                 {% for reddit in reddits: %}
                                 <!-- Will be an a tag to link to each subreddit page -->
                                     <a class="dropdown-item text-white" href="#">r/{{ reddit.name }}</a>
                                     <hr>
                                 {% endfor %}
+                            {% endif %}
 
                             </div>
                         </li>
