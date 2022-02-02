@@ -37,7 +37,7 @@ I have utilised the following:
 ---
 #### 3.1 Database Entity Diagram
 
-![db-schema](docs/FlaskRedditERD.png)
+![db-schema](docs/FlaskRedditERD%20(1).png)
 ---
 #### 3.2 Database Tables
 
