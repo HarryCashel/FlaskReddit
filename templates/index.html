@@ -10,10 +10,23 @@
         <div class="modal-dialog modal-dialog-centered modal-lg" role="form">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="create-post-text modal-title text-white" id="threadModalTitle">Create a post</h4>
+                    <h4 class="create-post-text modal-title" id="threadModalTitle">Create a post</h4>
                 </div>
                 <div class="modal-body">
-                    {{ wtf.quick_form(thread_form, button_map={"submit_button": "outline-secondary"}) }}
+                    {{ wtf.quick_form(thread_form, button_map={"submit_button": "outline-light"}) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="subredditModal" tabindex="-1" role="dialog" aria-labelledby="subredditModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="form">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="create-post-text modal-title" id="threadModalTitle">Create a community</h4>
+                </div>
+                <div class="modal-body">
+                    {{ wtf.quick_form(subreddit_form, button_map={"submit_button": "outline-light"}) }}
                 </div>
             </div>
         </div>
@@ -92,8 +105,10 @@
                     <div class="mb-3 card-body text-center text-white">
                         <h6 class="card-title">Home</h6>
                         <p class="card-text">Your personal FlaskReddit card. Create posts and communities.</p>
-                        <a href="#" class="mb-1 w-100 premium-button btn btn-outline-danger text-black">Create post</a>
-                        <a href="#" class="w-100 premium-button btn btn-outline-danger text-black">Create community</a>
+                        {% if current_user.is_authenticated %}
+                        <button type="button" class="mb-1 w-100 premium-button btn btn-outline-danger text-black" data-toggle="modal" data-target="#threadModal">Create post</button>
+                        {% endif %}
+                        <button type="button" class="w-100 premium-button btn btn-outline-danger text-black" data-toggle="modal" data-target="#subredditModal">Create community</button>
                     </div>
                 </div>
             </div>

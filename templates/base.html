@@ -19,7 +19,7 @@
                     <h4 class="modal-title" id="loginModalTitle">Log In</h4>
                 </div>
                 <div class="modal-body">
-                    {{ wtf.quick_form(login_form, button_map={"submit_button": "outline-secondary"}) }}
+                    {{ wtf.quick_form(login_form, button_map={"submit_button": "outline-light"}) }}
                 </div>
             </div>
         </div>
@@ -39,7 +39,7 @@
                     {% endfor %}
                     {% endif %}
                 {% endwith %}
-                    {{ wtf.quick_form(login_form, button_map={"submit_button": "outline-secondary"}) }}
+                    {{ wtf.quick_form(login_form, button_map={"submit_button": "outline-light"}) }}
                 </div>
             </div>
         </div>
