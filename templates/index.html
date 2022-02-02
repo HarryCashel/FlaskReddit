@@ -99,16 +99,19 @@
                     </div>
                 </div>
             </div>
+            {% if current_user.is_authenticated %}
             <div id="create-post-community-sidebar">
                 <div class="create-post-community-sidebar card border-dark mb-3 p-3" style="max-width: 20rem;">
                     <img src="../static/img/placeholder.png" class="card-img-top" style="max-height: 5rem;" alt="">
                     <div class="mb-3 card-body text-center text-white">
                         <h6 class="card-title">Home</h6>
                         <p class="card-text">Your personal FlaskReddit card. Create posts and communities.</p>
-                        {% if current_user.is_authenticated %}
+
+                        {% if reddits: %}
                         <button type="button" class="mb-1 w-100 premium-button btn btn-outline-danger text-black" data-toggle="modal" data-target="#threadModal">Create post</button>
                         {% endif %}
                         <button type="button" class="w-100 premium-button btn btn-outline-danger text-black" data-toggle="modal" data-target="#subredditModal">Create community</button>
+                        {% endif %}
                     </div>
                 </div>
             </div>
