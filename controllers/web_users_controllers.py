@@ -100,19 +100,19 @@ def home():
     if user_id and reddits:
 
         thread_form.parent_subreddit.choices = [(g.id, g.name) for g in reddits]
-    if request.method == "POST" and thread_form.validate_on_submit():
-        choice = thread_form.parent_subreddit.data
-        title = thread_form.title.data
-        content = thread_form.content.data
+        if request.method == "POST" and thread_form.validate_on_submit():
+            choice = thread_form.parent_subreddit.data
+            title = thread_form.title.data
+            content = thread_form.content.data
 
-        new_post = Thread()
-        new_post.parent_subreddit = choice
-        new_post.title = title
-        new_post.content = content
-        new_post.thread_owner = user_id
+            new_post = Thread()
+            new_post.parent_subreddit = choice
+            new_post.title = title
+            new_post.content = content
+            new_post.thread_owner = user_id
 
-        db.session.add(new_post)
-        db.session.commit()
+            db.session.add(new_post)
+            db.session.commit()
 
 
 
