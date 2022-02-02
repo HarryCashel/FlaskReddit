@@ -23,7 +23,7 @@ def load_user(user_id):
 @login_manager.unauthorized_handler
 def unauthorised():
     flash("You must be logged in to view this page")
-    return redirect(url_for('home'))
+    return redirect(url_for('web_users.home'))
 
 
 def get_subreddits():
@@ -97,7 +97,7 @@ def home():
             flash("Success")
             return redirect(url_for("web_users.home"))
 
-    if user_id:
+    if user_id and reddits:
 
         thread_form.parent_subreddit.choices = [(g.id, g.name) for g in reddits]
     if request.method == "POST" and thread_form.validate_on_submit():

@@ -138,6 +138,30 @@ ___
 ---
 #### 4.2 File Structure
 
+![mvc-img](docs/MVC.png)
+
+I have utilised the Model, View, Controller architectural pattern through the use of the Flask framework.
+The file structure has been created to implement this.
+
+* [README.md](README.md) - This document
+* [docs](docs) - Contains links and images used in this README
+* [requirements](requirements.txt) - Dependencies to be installed to a new environment for the application to be functional
+* [main.py](main.py) - The main flask application, registration and initiation of flask app with supporting libraries
+* [settings.py](settings.py) - Default settings for different environments (testing/development)
+* [commands.py](commands.py) - Custom commands accessed via the command line interface
+* [.env.example](env.example) - .env template to be populated during setup
+* [forms](forms.py) - Wtforms for generating forms on the web interface, processed through
+the relevant controllers and rendered in the appropriate templates
+* [templates](templates) - Jinja2 templates for rendering web pages through the web application routes
+* [controllers](controllers) - Application logic, request handling and route definition for the API and web application
+endpoints
+* [models](models) - SQLAlchemy ORM models that interact with the database. This is where the database tables
+are defined
+* [schemas](schemas) - SQLAlchemy Marshmallow schemas for serialisation and deserialisation of data. Contains the logic
+for validation of data to and from the database and enables the application to interact with the database
+* [migrations](migrations) - Database migration files to update database to the latest state defined in this directory
+
+
 ___
 #### 4.3 Set Up Databases (Testing and Development)
 

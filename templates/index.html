@@ -26,12 +26,14 @@
 
         <div>
         {% if current_user.is_authenticated %}
+            {% if reddits %}
             <div class="create-post-card card border-dark mb-3 ml-auto">
                 <div class="card-body">
                     <img src="../static/img/reddit.png" width="30" height="30" alt="">
                     <input class="w-75 ml-auto" type="text" data-toggle="modal" placeholder="Create a post" data-target="#threadModal">
                 </div>
             </div>
+            {% endif %}
             {% endif %}
         {% for thread in threads: %}
             <div class="thread-card card border-dark mb-3 ml-auto" style="max-width: 65rem;">
