@@ -13,18 +13,20 @@ with the Flask library.
 
 The purpose is to create a simple CRUD-based application that can be interacted with
 via an API client such as Postman or through the web interface via a browser.
+
+
 I built this project to test my skills and learn the flow of creating a web application from the ground up. I have 
-utilised my own knowledge of Python, Postregsql, Amazon Web Services to code an API, an application and host a database
+utilised my own knowledge of Python, Postregsql, Amazon Web Services and networking to code an API, an application and host a database
 on the cloud. I used this application to perfect what I know and research and learn what I do not. Above all this was a
-passion project that I have had for a long time with the intention to display my knowledge.
+passion project with the intention to display my knowledge.
 
 
 ---
 ### 3. Scope (Libraries, Dependencies, Networks, Frameworks, etc.)
 
-Two data models are implemented on a PostgreSQL database with one-to-one, one-to-many and many-to-many relationships.
-One database for testing/development and another database for production. These are hosted on a single AWS EC2 instance.
-Closer to production the code will be hosted on a separate EC2 instance.
+This section will detail my process of developing the databases, file structure and source code. 
+I encountered several pathways I could have taken while developing this application, and I chose what was most
+appropriate for the desired result.
 
 I have utilised the following:
 
@@ -36,6 +38,28 @@ I have utilised the following:
 * `jwt_entended` handles some authorisation and authentication
 * `bootstrap` for the presentation of our front end. 
 * `Jinja` for templating html/css
+
+Flask is an unopinionated web-framework and doesn't make decisions for the developer. This gave me the freedom to 
+choose libraries I wanted to use and how to set up my source code. Flask is **configuration over convention** and
+I prefer that over frameworks like *Django* that are **convention over configuration**. Flask has been used by
+companies such as Netflix, Uber and appropriately, Reddit.
+
+Postgresql is an open-source object-relational database with 30 years of active development. A relational database
+is the most appropriate database,  and I chose SQL (Structured Query Language) for simplicity and my familiarity.
+Postgres is used by Spotify, Netflix and Reddit.
+
+SQLAlchemy is the most popular Python library for SQL. The application utilises this library to connect to the database
+and the logic for the models are created using SQLAlchemy.
+
+Two data models are implemented on a PostgreSQL database with one-to-one, one-to-many and many-to-many relationships.
+One database for testing/development and another database for production. These are hosted on an AWS EC2 instance
+in a private subnet.
+The application is hosted on a public ec2 instance and both the application and the database are within the same VPC
+(Virtual Private Cloud)
+
+Data is serialised and deserialised using the Marshmallow library. Schemas are created with Marshmallow by passing
+the models created with SQLAlchemy through to Marshmallow. Validation of data is also handled when declaring schemas.
+
 
 ---
 #### 3.1 Database Entity Diagram
@@ -161,9 +185,10 @@ to maintain a Stateful session for a logged-in user
 
 
 ---
-### 4. Installation
-This project is open-source and freely available to be downloaded and edited. This section will clearly explain the
-steps required to install the most recent code. This document assumes bash in a linux OS or similar.
+### 4. Installation/Environment/File Structure
+
+This project is open-source and freely available to be downloaded and edited. This section will detail the  
+steps required to install the most recent version of Pythreddit. This document assumes bash in a linux OS or similar.
 
 <br>
 
