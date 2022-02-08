@@ -298,13 +298,13 @@ I have utilised the Model, View, Controller architectural pattern, implemented t
 The file structure has been created to implement this. Below is a simple image that represents the MVC pattern and 
 how each abstraction has clear responsibilities.
 
-When a http request comes in the first thing the application does is pattern match the route. Routes are attached
-to different controllers, based on the match, a controller is called.
+When a http request comes in the first thing the application does is pattern match the route.
+Routes are attached to different controllers and based on the match, a controller is called.
 
-The controllers job is business logic, for example when a user goes to the register route, the controller will have
-the code that can accept data from the user, and code to pass that data via a schema to be validated into the database.
-The model is used by the controller to access or manipulate the database. The model is the only object with a direct
-connection to the database.
+The controllers' job is business logic; for example, when a user goes to the register route, the controller will 
+have the code that can accept data from the user and code to pass that data via a schema to be validated into the 
+database. The controller uses the model to access or manipulate the database. The model is the only object with a 
+direct connection to the database.
 
 The view is what is presented to the user, it contains the code to present the register form to the user,
 while the controller will use a model to access the data to present or manipulate the data received. A schema is used
