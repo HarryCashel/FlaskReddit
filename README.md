@@ -351,7 +351,7 @@ a virtual environment and export a testing environment.
 
 ---
 #### 4.5 Running the application on an AWS EC2 Instance
-
+  
 ---
 ### 5. Continuous Integration/Continuous Deployment
 
