@@ -192,7 +192,52 @@ steps required to install the most recent version of Pythreddit. This document a
 
 <br>
 
-##### 4.1.1 Project and Environment Setup
+
+#### 4.1 File Structure
+
+---
+
+I have utilised the Model, View, Controller architectural pattern, implemented through the Flask framework.
+The file structure has been created to implement this. Below is a simple image that represents the MVC pattern and 
+how each abstraction has clear responsibilities.
+
+When a http request comes in the first thing the application does is pattern match the route.
+Routes are attached to different controllers and based on the match, a controller is called.
+
+The controllers' job is business logic; for example, when a user goes to the register route, the controller will 
+have the code that can accept data from the user and code to pass that data via a schema to be validated into the 
+database. The controller uses the model to access or manipulate the database. The model is the only object with a 
+direct connection to the database.
+
+The view is what is presented to the user, it contains the code to present the register form to the user,
+while the controller will use a model to access the data to present or manipulate the data received. A schema is used
+to validate that data.
+
+![mvc-img](docs/MVC.png)
+
+
+
+* [README.md](README.md) - This document
+* [docs](docs) - Contains links and images used in this README
+* [requirements](requirements.txt) - Dependencies to be installed to a new environment for the application to be functional
+* [main.py](main.py) - The main flask application, registration and initiation of flask app with supporting libraries
+* [settings.py](settings.py) - Default settings for different environments (testing/development)
+* [commands.py](commands.py) - Custom commands accessed via the command line interface
+* [.env.example](env.example) - .env template to be populated during setup
+* [forms](forms.py) - Wtforms for generating forms on the web interface, processed through
+the relevant controllers and rendered in the appropriate templates
+* [templates](templates) - Jinja2 templates for rendering web pages through the web application routes
+* [controllers](controllers) - Application logic, request handling and route definition for the API and web application
+endpoints
+* [models](models) - SQLAlchemy ORM models that interact with the database. This is where the database tables
+are defined
+* [schemas](schemas) - SQLAlchemy Marshmallow schemas for serialisation and deserialisation of data. Contains the logic
+for validation of data to and from the database and enables the application to interact with the database
+* [migrations](migrations) - Database migration files to update database to the latest state defined in this directory
+
+
+
+##### 4.2 Project and Environment Setup
 
 ---
 
@@ -218,7 +263,7 @@ steps required to install the most recent version of Pythreddit. This document a
 
 <br>
 
-##### 4.1.2 Set up Database
+##### 4.3 Set up Database
 
 ---- 
 
@@ -269,7 +314,7 @@ steps required to install the most recent version of Pythreddit. This document a
 
 <br>
 
-##### Migrations
+##### 4.4 Migrations
 
 ---
 
@@ -290,60 +335,22 @@ This will populate the database with fake users and subreddits and assigns owner
 
 <br>
 
-#### 4.2 File Structure
+---
+#### 4.3 Run Automated Tests
+
+
+1. I wrote scripts for automatic testing that are found in the [tests](tests) folder. To run them in bash, activate
+a virtual environment and export a testing environment.
+
+    ```source venv/bin/activate```
+
+    ```export FLASK_ENV=testing```
+
+    ```python -m unittest discover -s tests/ -v```
+
 
 ---
-
-I have utilised the Model, View, Controller architectural pattern, implemented through the Flask framework.
-The file structure has been created to implement this. Below is a simple image that represents the MVC pattern and 
-how each abstraction has clear responsibilities.
-
-When a http request comes in the first thing the application does is pattern match the route.
-Routes are attached to different controllers and based on the match, a controller is called.
-
-The controllers' job is business logic; for example, when a user goes to the register route, the controller will 
-have the code that can accept data from the user and code to pass that data via a schema to be validated into the 
-database. The controller uses the model to access or manipulate the database. The model is the only object with a 
-direct connection to the database.
-
-The view is what is presented to the user, it contains the code to present the register form to the user,
-while the controller will use a model to access the data to present or manipulate the data received. A schema is used
-to validate that data.
-
-![mvc-img](docs/MVC.png)
-
-
-
-* [README.md](README.md) - This document
-* [docs](docs) - Contains links and images used in this README
-* [requirements](requirements.txt) - Dependencies to be installed to a new environment for the application to be functional
-* [main.py](main.py) - The main flask application, registration and initiation of flask app with supporting libraries
-* [settings.py](settings.py) - Default settings for different environments (testing/development)
-* [commands.py](commands.py) - Custom commands accessed via the command line interface
-* [.env.example](env.example) - .env template to be populated during setup
-* [forms](forms.py) - Wtforms for generating forms on the web interface, processed through
-the relevant controllers and rendered in the appropriate templates
-* [templates](templates) - Jinja2 templates for rendering web pages through the web application routes
-* [controllers](controllers) - Application logic, request handling and route definition for the API and web application
-endpoints
-* [models](models) - SQLAlchemy ORM models that interact with the database. This is where the database tables
-are defined
-* [schemas](schemas) - SQLAlchemy Marshmallow schemas for serialisation and deserialisation of data. Contains the logic
-for validation of data to and from the database and enables the application to interact with the database
-* [migrations](migrations) - Database migration files to update database to the latest state defined in this directory
-
-
-___
-#### 4.3 Set Up Databases (Testing and Development)
-
----
-#### 4.4 Run Migrations
-
----
-#### 4.5 Run Automated Tests
-
----
-#### 4.6 Running the application on an AWS EC2 Instance
+#### 4.5 Running the application on an AWS EC2 Instance
 
 ---
 ### 5. Continuous Integration/Continuous Deployment
