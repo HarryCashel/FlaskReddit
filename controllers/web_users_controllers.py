@@ -114,6 +114,26 @@ def home():
             db.session.add(new_post)
             db.session.commit()
 
+            return redirect("/web")
+
+    if user_id and subreddit_form.validate_on_submit():
+        title = subreddit_form.title.data
+        about = subreddit_form.about.data
+
+        new_subreddit = Subreddit()
+        new_subreddit.owner_id = user_id
+        new_subreddit.name = title
+        new_subreddit.description = about
+        db.session.add(new_subreddit)
+        db.session.commit()
+
+        new_member = SubredditMembers()
+        new_member.user_id = user_id
+        new_member.subreddit_id = new_subreddit.id
+        db.session.add(new_member)
+        db.session.commit()
+
+        return redirect("/web")
 
 
 
