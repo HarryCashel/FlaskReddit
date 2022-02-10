@@ -41,7 +41,6 @@ def get_threads():
 def get_user_subreddits():
     """Returns list of subreddits user has joined"""
     if current_user.is_authenticated:
-
         user_id = current_user.get_id()
         member_of = SubredditMembers.query.filter_by(user_id=user_id).all()
         reddits = [Subreddit.query.filter_by(id=reddit_id) for reddit_id in member_of]
@@ -134,8 +133,6 @@ def home():
         db.session.commit()
 
         return redirect("/web")
-
-
 
     return render_template("index.html", subreddits=subreddits, threads=threads,
                            current_user=current_user, login_form=login_form, register_form=register_form,
