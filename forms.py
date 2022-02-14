@@ -51,6 +51,14 @@ class UpdateSubreddit(FlaskForm):
     submit = SubmitField("Update Subreddit")
 
 
+class JoinSub(FlaskForm):
+    submit = SubmitField("Join")
+
+
+class LeaveSub(FlaskForm):
+    submit = SubmitField("Leave")
+
+
 # Thread forms
 
 class CreateThread(FlaskForm):

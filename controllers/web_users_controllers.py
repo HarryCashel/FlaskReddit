@@ -42,8 +42,14 @@ def get_user_subreddits():
     """Returns list of subreddits user has joined"""
     if current_user.is_authenticated:
         user_id = current_user.get_id()
+
         member_of = SubredditMembers.query.filter_by(user_id=user_id).all()
-        reddits = [Subreddit.query.filter_by(id=reddit_id) for reddit_id in member_of]
+        if member_of:
+            reddits = [Subreddit.query.filter_by(id=entry.subreddit_id).first() for entry in member_of]
+
+        else:
+            reddits = None
+
         return reddits
 
 
@@ -55,14 +61,8 @@ def home():
     register_form = RegisterForm()
     subreddit_form = CreateSubreddit()
     thread_form = CreateThread()
-
     user_id = current_user.get_id()
-    member_of = SubredditMembers.query.filter_by(user_id=user_id).all()
-    if member_of:
-        reddits = [Subreddit.query.filter_by(id=entry.subreddit_id).first() for entry in member_of]
-
-    else:
-        reddits = None
+    reddits = get_user_subreddits()
 
     # check if login form is valid and submitted
     if request.method == "POST" and login_form.validate_on_submit():
