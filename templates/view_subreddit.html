@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}{{ current_subreddit.name }}{% endblock %}
+{% block content %}
+        {# Subreddit banner #}
+        <div class="container-fluid">
+            <img src="/static/img/python_banner.png" class="img-fluid" alt="banner image for {{ current_subreddit.name }}">
+        </div>
+        <div class="container-fluid">
+            <div class="col-lg-4">
+
+            </div>
+        </div>
+
+    <!-- content container -->
+    <div class="container">
+        <div class="row m-auto">
+
+            <div class="main-content-container col-6 ml-auto">
+
+                <!-- thread container -->
+
+                <!-- create thread -->
+                <div class="create-post-card card border-dark mb-3 ml-auto">
+                <div class="card-body">
+                    <img src="../static/img/reddit.png" width="30" height="30" alt="">
+                    <input class="w-75 ml-auto" type="text" data-toggle="modal" placeholder="Create a post" data-target="#threadModal">
+                </div>
+            </div>
+                {% for thread in threads %}
+                    <a href="">
+                <div class="thread-card card border-dark mb-3 ml-auto">
+                    <div class="row no-gutters">
+                        <div class="col-md-8">
+                            <div class="card-body text-white">
+                                <h5 class="card-title mb-3">{{ thread.title }}</h5>
+                                <p class="card-text">{{ thread.content }}</p>
+                            </div>
+                            <div class="card-footer bg-transparent border-dark">
+                                <a href="#" class="btn btn-outline-secondary">Comment area</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    </a>
+                {% endfor %}
+            </div>
+
+        <!-- sidebar container -->
+        <div class="media-sidebar-container col-6 mr-auto d-none d-md-block">
+        <div>
+            <div id="home-sidebar mb-3">
+                <div class="top-communities-card card border-dark mb-3 p-3" style="max-width: 20rem;">
+                    <img src="../static/img/placeholder.png" class="card-img-top">
+                    <div class="card-img-overlay">
+                        <div class="text-white">Top Communities</div>
+                    </div>
+
+                    <ol class="text-center mt-auto">
+
+                        {% for subreddit in subreddits %}
+                        <!-- Will be an anchor tag to link to the 5 most popular subreddit pages -->
+                            <a href="#" class="card-link text-white">r/{{ subreddit.name }}</a>
+                            <hr>
+                        {% endfor %}
+
+                    </ol>
+                </div>
+            </div>
+            <div id="premium-sidebar mb-3">
+                <div class="premium-card card border-dark mb-3" style="max-width: 20rem;">
+                    <div class="card-body text-center text-white">
+                        <h6 class="card-title">FlaskReddit Premium</h6>
+                        <p class="card-text">Sign up for the best experience!</p>
+                        <a href="#" class="w-100 premium-button btn btn-outline-danger text-black">Sign Up</a>
+                    </div>
+                </div>
+            </div>
+            {% if current_user.is_authenticated %}
+            <div id="create-post-community-sidebar">
+                <div class="create-post-community-sidebar card border-dark mb-3 p-3" style="max-width: 20rem;">
+                    <img src="../static/img/placeholder.png" class="card-img-top" style="max-height: 5rem;" alt="">
+                    <div class="mb-3 card-body text-center text-white">
+                        <h6 class="card-title">Home</h6>
+                        <p class="card-text">Your personal FlaskReddit card. Create posts and communities.</p>
+
+                        {% if reddits %}
+                        <button type="button" class="mb-1 w-100 premium-button btn btn-outline-danger text-black" data-toggle="modal" data-target="#threadModal">Create post</button>
+                        {% endif %}
+                        <button type="button" class="w-100 premium-button btn btn-outline-danger text-black" data-toggle="modal" data-target="#subredditModal">Create community</button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div id="nav-help-sidebar">
+                <div class="sidebar-nav-help card border-dark mb-3 p-3" style="max-width: 20rem;">
+                    <div class="row">
+                        <div class="mx-auto col-6">
+                            <a href="#">Help</a>
+                            <a href="#">FlaskReddit Premium</a>
+                            <a href="#">FlaskReddit Premium</a>
+                            <a href="#">FlaskReddit Gifts</a>
+                            <a href="#">Communities</a>
+                        </div>
+                        <div class="mx-auto col-6">
+                            <a href="#">About</a>
+                            <a href="#">Careers</a>
+                            <a href="#">Advertise</a>
+                            <a href="#">Terms</a>
+                            <a href="#">Content Policy</a>
+                            <a href="#">Privacy Policy</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+        </div>
+    </div>
+
+{% endblock %}
