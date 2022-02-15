@@ -4,7 +4,7 @@ from models.User import User, UserMixin
 from models.Subreddit import Subreddit
 from models.Thread import Thread
 from models.SubredditMembers import SubredditMembers
-from forms import LoginForm, RegisterForm, CreateSubreddit, CreateThread, JoinSub, LeaveSub
+from forms import LoginForm, RegisterForm, CreateSubreddit, CreateThread, CreateSpecificThread, JoinSub, LeaveSub
 from main import db, login_manager, bootstrap
 from schemas.UserSchema import user_schema
 from flask import Blueprint, render_template, flash, redirect, url_for, abort, request
@@ -27,7 +27,6 @@ def get_sub_threads(subreddit_name):
 def is_member(subreddit_name, user_id):
     subreddit = Subreddit.query.filter_by(name=subreddit_name).first().id
     member = SubredditMembers.query.filter_by(user_id=user_id, subreddit_id=subreddit).first()
-    print(member)
     if member:
         return True
     return False
@@ -56,6 +55,7 @@ def show_reddit(name):
     register_form = RegisterForm()
     user_id = current_user.get_id()
     subreddits = get_subreddits()
+    thread_form = CreateSpecificThread()
     join = JoinSub()
     leave = LeaveSub()
     member = is_member(name, user_id)
@@ -67,7 +67,8 @@ def show_reddit(name):
 
     return render_template(
         "view_subreddit.html", login_form=login_form, register_form=register_form, subreddits=subreddits,
-        join=join, leave=leave, threads=threads, current_subreddit=current_subreddit, member=member
+        join=join, leave=leave, threads=threads, current_subreddit=current_subreddit, member=member,
+        thread_form=thread_form
     )
 
 
@@ -96,11 +97,30 @@ def leave_subreddit(name):
     if form.submit.data:
         subreddit_id = Subreddit.query.filter_by(name=name).first().id
         subreddit_member = SubredditMembers.query.filter_by(user_id=user_id, subreddit_id=subreddit_id).first()
-        print("removed member")
         if not subreddit_member:
-            print("didn't work")
             return redirect(url_for("web_reddits.show_reddit", name=name))
         db.session.delete(subreddit_member)
         db.session.commit()
 
         return redirect(url_for("web_reddits.show_reddit", name=name))
+
+
+@web_reddits.route("<name>/create", methods=["POST"])
+@login_required
+def create_thread(name):
+    user_id = current_user.get_id()
+    form = CreateSpecificThread()
+    subreddit_id = Subreddit.query.filter_by(name=name).first().id
+
+    if form.submit.data:
+        thread = Thread()
+        thread.thread_owner = user_id
+        thread.parent_subreddit = subreddit_id
+        thread.title = form.title.data
+        thread.content = form.content.data
+
+        db.session.add(thread)
+        db.session.commit()
+
+        return redirect(url_for("web_reddits.show_reddit", name=name))
+

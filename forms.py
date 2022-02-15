@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, BooleanField, PasswordField, SubmitField, EmailField, URLField, SelectField
+from wtforms import StringField, BooleanField, PasswordField, SubmitField, EmailField, URLField, SelectField, \
+    IntegerField, TextAreaField
 from wtforms.validators import DataRequired, URL, Email, Length, EqualTo, ValidationError
 from models.User import User
 
@@ -63,26 +64,32 @@ class LeaveSub(FlaskForm):
 
 class CreateThread(FlaskForm):
     parent_subreddit = SelectField(u"Subreddits", validators=[DataRequired()])
-    title = StringField("Title", validators=[DataRequired(), Length(min=1)])
+    title = TextAreaField("Title", validators=[DataRequired(), Length(min=1)])
     content = StringField("Content", validators=[DataRequired(), Length(min=1)])
+    submit = SubmitField("Post")
+
+
+class CreateSpecificThread(FlaskForm):
+    title = StringField("Title", validators=[DataRequired(), Length(min=1)])
+    content = TextAreaField("Content", validators=[DataRequired(), Length(min=1)])
     submit = SubmitField("Post")
 
 
 class UpdateThread(FlaskForm):
     title = StringField("Title", validators=[DataRequired(), Length(min=1)])
-    content = StringField("Content", validators=[DataRequired(), Length(min=1)])
+    content = TextAreaField("Content", validators=[DataRequired(), Length(min=1)])
     submit = SubmitField("Update")
 
 
 # Comment forms
 
 class CreateComment(FlaskForm):
-    content = StringField("Content", validators=[DataRequired(), Length(min=1)])
+    content = TextAreaField("Content", validators=[DataRequired(), Length(min=1)])
     submit = SubmitField("Post")
 
 
 class UpdateComment(FlaskForm):
-    content = StringField("Content", validators=[DataRequired(), Length(min=1)])
+    content = TextAreaField("Content", validators=[DataRequired(), Length(min=1)])
     submit = SubmitField("Update")
 
 

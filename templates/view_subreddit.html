@@ -3,6 +3,35 @@
 
 {% block title %}{{ current_subreddit.name }}{% endblock %}
 {% block content %}
+
+        <!-- modals -->
+
+    <div class="modal fade" id="threadModal" tabindex="-1" role="dialog" aria-labelledby="threadModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="form">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="create-post-text modal-title" id="threadModalTitle">Create a post</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-group" method="POST" action="{{ url_for('web_reddits.create_thread', name=current_subreddit.name) }}">
+                        <div class="form-group">
+                            {{ thread_form.title.label }}
+                            {{ thread_form.title(class="form-control pt-4") }}
+                        </div>
+                        <div class="form-group">
+                            {{ thread_form.content.label(class="pt-4") }}
+                            {{ thread_form.content(class="form-control pt-4") }}
+                        </div>
+                        <div class="form-group">
+                            {{ thread_form.submit(class="btn btn-outline-secondary") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
         <!-- subreddit banner -->
         <div class="container-fluid mt-4">
             <img src="/static/img/python_banner.png" class="img-fluid" alt="banner image for {{ current_subreddit.name }}">
