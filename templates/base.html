@@ -75,7 +75,7 @@
 
         <nav class="navbar navbar-expand-lg navbar-dark mb-3 mx-auto">
 {#            <div class="d-flex justify-content-between">#}
-                <a class="navbar-brand" href="#">
+                <a class="navbar-brand" href="{{ url_for('web_users.home') }}">
                     <img src="../static/img/reddit.png" width="30" height="30" class="d-inline-block align-top" alt="">
                     FlaskReddit
                 </a>
@@ -98,7 +98,7 @@
                             <h6>My Communities</h6>
                                 {% for reddit in reddits: %}
                                 <!-- Will be an a tag to link to each subreddit page -->
-                                    <a class="dropdown-item text-white" href="#">r/{{ reddit.name }}</a>
+                                    <a class="dropdown-item text-white" href="{{ url_for('web_reddits.show_reddit', name=reddit.name) }}">r/{{ reddit.name }}</a>
                                     <hr>
                                 {% endfor %}
                             {% endif %}
