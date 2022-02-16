@@ -103,7 +103,7 @@
 
                         {% for subreddit in subreddits %}
                         <!-- Will be an anchor tag to link to the 5 most popular subreddit pages -->
-                            <a href="#" class="card-link text-white">r/{{ subreddit.name }}</a>
+                            <a href="{{ url_for('web_reddits.show_reddit', name=subreddit.name) }}" class="card-link text-white">r/{{ subreddit.name }}</a>
                             <hr>
                         {% endfor %}
 
