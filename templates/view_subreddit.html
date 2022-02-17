@@ -7,7 +7,7 @@
         <!-- modals -->
 
     <div class="modal fade" id="threadModal" tabindex="-1" role="dialog" aria-labelledby="threadModalTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg" role="form">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="form">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="create-post-text modal-title" id="threadModalTitle">Create a post</h4>
@@ -71,7 +71,7 @@
                 </div>
             </div>
                 {% for thread in threads %}
-                    <a href="">
+                    <a href="{{ url_for('web_threads.show_thread', thread_id=thread.id) }}">
                 <div class="thread-card card border-dark mb-3 ml-auto">
                     <div class="row no-gutters">
                         <div class="col-md-8">
