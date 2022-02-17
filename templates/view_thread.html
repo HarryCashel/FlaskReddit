@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}{{ current_subreddit.name }}{% endblock %}
+{% block content %}
+
+        <!-- modals -->
+
+{#    <div class="modal fade" id="threadModal" tabindex="-1" role="dialog" aria-labelledby="threadModalTitle" aria-hidden="true">#}
+{#        <div class="modal-dialog modal-dialog-centered modal-lg" role="form">#}
+{#            <div class="modal-content">#}
+{#                <div class="modal-header">#}
+{#                    <h4 class="create-post-text modal-title" id="threadModalTitle">Create a post</h4>#}
+{#                </div>#}
+{#                <div class="modal-body">#}
+{#                    <form class="form-group" method="POST" action="{{ url_for('web_reddits.create_thread', name=current_subreddit.name) }}">#}
+{#                        <div class="form-group">#}
+{#                            {{ thread_form.title.label }}#}
+{#                            {{ thread_form.title(class="form-control pt-4") }}#}
+{#                        </div>#}
+{#                        <div class="form-group">#}
+{#                            {{ thread_form.content.label(class="pt-4") }}#}
+{#                            {{ thread_form.content(class="form-control pt-4") }}#}
+{#                        </div>#}
+{#                        <div class="form-group">#}
+{#                            {{ thread_form.submit(class="btn btn-outline-secondary") }}#}
+{#                        </div>#}
+{#                    </form>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+
+
+{#        <!-- subreddit banner -->#}
+{#        <div class="container-fluid mt-4">#}
+{#            <img src="/static/img/python_banner.png" class="img-fluid" alt="banner image for {{ current_subreddit.name }}">#}
+{#        </div>#}
+{#            <div class="container mt-4">#}
+{#                <div class="row mx-5 align-items-center">#}
+{#                    <div class="col d-flex justify-content-center">#}
+{#                        <img class="my-auto" src="../static/img/reddit.png" width="30" height="30" alt="">#}
+{#                        <h2 class="mx-3 my-auto text-white">{{ current_subreddit.name }}</h2>#}
+{#                        {% if not member %}#}
+{#                        <form class="my-auto" method="POST" action="{{ url_for('web_reddits.join_subreddit', name=current_subreddit.name) }}">#}
+{#                            {{ join.submit }}#}
+{#                        </form>#}
+{#                        {% endif %}#}
+{#                        {% if member %}#}
+{#                        <form class="my-auto" method="POST" action="{{ url_for('web_reddits.leave_subreddit', name=current_subreddit.name) }}">#}
+{#                            {{ leave.submit }}#}
+{#                        </form>#}
+{#                        {% endif %}#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+
+    <!-- content container -->
+    <div class="container mt-4">
+    <div class="row m-auto">
+
+            <div class="main-content-container col-6 ml-auto">
+
+                <!-- thread container -->
+                <a href="">
+                    <div class="thread-card card border-dark mb-3 ml-auto">
+                        <div class="row no-gutters">
+                            <div class="col-md-8">
+                                <div class="card-body text-white">
+                                    <p class="card-title mb-3">r/<a href="{{ url_for('web_reddits.show_reddit', name=current_subreddit.name) }}">{{ current_subreddit.name }}</a> Posted by {{ current_user.username }}</p>
+                                    <p class="card-title mb-3">{{ thread.title }}</p>
+                                    <p class="card-text">{{ thread.content }}</p>
+                                </div>
+
+                                <div class="card border-dark mb-3 ml-auto">
+                                    <div class="card-body text-white">
+                                        <p class="card-text mb-3">{{ comment.content }}</p>
+                                    </div>
+                                    <div class="card-footer bg-transparent border-dark">
+                                        <form action="">
+                                            <div class="form-group">{{  }}</div>
+                                            <div class="form-group"></div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-transparent border-dark">
+                                    <form class="form-group" method="POST" action="{{ url_for('web_threads.create_comment', thread_id=thread.id) }}">
+                                        <div class="form-group">
+                                            {{ comment_form.content(class='form-control pt-4') }}
+                                        </div>
+                                        <div class="form-group">{{ comment_form.submit(class='btn btn-outline-secondary') }}</div>
+                                    </form>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                <!-- comment container -->
+                <!-- create comment -->
+
+            </div>
+
+        <!-- sidebar container -->
+    <div class="media-sidebar-container col-6 mr-auto d-none d-md-block">
+        <div>
+            <div id="home-sidebar mb-3">
+                <div class="top-communities-card card border-dark mb-3 p-3" style="max-width: 20rem;">
+                    <img src="../static/img/placeholder.png" class="card-img-top">
+                    <div class="card-img-overlay">
+                        <div class="text-white">Top Communities</div>
+                    </div>
+
+                    <ol class="text-center mt-auto">
+
+                        {% for subreddit in subreddits %}
+                        <!-- Will be an anchor tag to link to the 5 most popular subreddit pages -->
+                            <a href="{{ url_for('web_reddits.show_reddit', name=subreddit.name) }}" class="card-link text-white">r/{{ subreddit.name }}</a>
+                            <hr>
+                        {% endfor %}
+
+                    </ol>
+                </div>
+            </div>
+            <div id="premium-sidebar mb-3">
+                <div class="premium-card card border-dark mb-3" style="max-width: 20rem;">
+                    <div class="card-body text-center text-white">
+                        <h6 class="card-title">FlaskReddit Premium</h6>
+                        <p class="card-text">Sign up for the best experience!</p>
+                        <a href="#" class="w-100 premium-button btn btn-outline-danger text-black">Sign Up</a>
+                    </div>
+                </div>
+            </div>
+            {% if current_user.is_authenticated %}
+            <div id="create-post-community-sidebar">
+                <div class="create-post-community-sidebar card border-dark mb-3 p-3" style="max-width: 20rem;">
+                    <img src="../static/img/placeholder.png" class="card-img-top" style="max-height: 5rem;" alt="">
+                    <div class="mb-3 card-body text-center text-white">
+                        <h6 class="card-title">Home</h6>
+                        <p class="card-text">Your personal FlaskReddit card. Create posts and communities.</p>
+
+                        {% if reddits %}
+                        <button type="button" class="mb-1 w-100 premium-button btn btn-outline-danger text-black" data-toggle="modal" data-target="#threadModal">Create post</button>
+                        {% endif %}
+                        <button type="button" class="w-100 premium-button btn btn-outline-danger text-black" data-toggle="modal" data-target="#subredditModal">Create community</button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div id="nav-help-sidebar">
+                <div class="sidebar-nav-help card border-dark mb-3 p-3" style="max-width: 20rem;">
+                    <div class="row">
+                        <div class="mx-auto col-6">
+                            <a href="#">Help</a>
+                            <a href="#">FlaskReddit Premium</a>
+                            <a href="#">FlaskReddit Premium</a>
+                            <a href="#">FlaskReddit Gifts</a>
+                            <a href="#">Communities</a>
+                        </div>
+                        <div class="mx-auto col-6">
+                            <a href="#">About</a>
+                            <a href="#">Careers</a>
+                            <a href="#">Advertise</a>
+                            <a href="#">Terms</a>
+                            <a href="#">Content Policy</a>
+                            <a href="#">Privacy Policy</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    </div>
+    </div>
+
+{% endblock %}
