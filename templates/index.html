@@ -50,8 +50,8 @@
             </div>
             {% endif %}
             {% endif %}
-        {% for thread in threads: %}
-            <a href="">
+        {% for thread in threads %}
+            <a href="{{ url_for('web_threads.show_thread', thread_id=thread.id) }}">
             <div class="thread-card card border-dark mb-3 ml-auto" style="max-width: 65rem;">
                 <div class="row no-gutters">
                     {% if thread.id % 2 == 0 %}
