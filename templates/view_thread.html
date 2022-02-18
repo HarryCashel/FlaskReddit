@@ -6,6 +6,10 @@
 
         <!-- modals -->
 
+        <!-- Modals -->
+
+
+
 {#    <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalTitle" aria-hidden="true">#}
 {#        <div class="modal-dialog modal-dialog-centered modal-lg" role="form">#}
 {#            <div class="modal-content">#}
@@ -71,7 +75,7 @@
                                     <p class="card-title mb-3">{{ thread.title }}</p>
                                     <p class="card-text">{{ thread.content }}</p>
                                 </div>
-                            <div class="container-fluid">
+                            <div class=" card-body container-fluid">
                                 <div class="row no-gutters text-white mx-auto">
                                     <a class="mx-auto" href="#">
                                     <img class="mx-auto" src="../static/img/chat.png" width="20" height="20" alt="">
@@ -99,13 +103,49 @@
                                         {{ comment_form.submit(class=" my-2") }}
                                     </form>
                                 </div>
-                                <hr>
+
                                 {% for comment in thread.get_comments() %}
-                                    <div class="text-white">
-                                        <p class="font-italic" style="font-size: 50%">{{ owner(comment_id=comment.id) }} *
-                                            {{ comment.show_time() }}</p>
-                                        <p>{{ comment.content }}</p>
+                                    {% if comment.parent_thread %}
+                                    <hr>
+                                    {% endif %}
+                                    <div class="text-white ">
+                                        <p class="font-italic mt-2 mb-0" style="font-size: 50%">{{ owner(comment_id=comment.id) }} *
+                                        {{ comment.show_time() }}</p>
+                                        <p style="margin: 0">{{ comment.content }}</p>
+
                                     </div>
+                                    <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalTitle" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered" role="form">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h6 class="create-post-text modal-title" id="commentModalTitle">Comment</h6>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form class="form-group" method="POST" action="{{ url_for('web_threads.create_child_comment', thread_id=thread.id, comment_id=comment.id) }}">
+                                                        <div class="form-group">
+                                                            {{ child_comment_form.content(class="form-control pt-4") }}
+                                                            {{ child_comment_form.submit(class="btn btn-outline-secondary") }}
+                                                        </div>
+
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    {% if comment.parent_thread %}
+                                        <button class="btn btn-outline-secondary btn-sm py-0" style="font-size: 0.7rem;" type="button" data-toggle="modal" data-target="#commentModal">comment</button>
+                                        {% else %}
+                                        <button class="btn btn-outline-secondary btn-sm py-0 ml-3" style="font-size: 0.5rem;" type="button" data-toggle="modal" data-target="#commentModal">comment</button>
+                                    {% endif %}
+                                    {% if comment.get_comments() %}
+                                        {% for c_comment in comment.get_comments() %}
+                                            <p class="font-italic mt-2 mb-0 ml-3 text-white" style="font-size: 50%">{{ owner(comment_id=c_comment.id) }} *
+                                            {{ comment.show_time() }}</p>
+                                            <p class="ml-3 mb-0 font-weight-lighter text-white" style="font-size: .7rem;">{{ c_comment.content }}</p>
+                                        {% endfor %}
+                                    {% endif %}
+
                                 {% endfor %}
 
                             </div>
