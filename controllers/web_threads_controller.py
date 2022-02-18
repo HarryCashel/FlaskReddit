@@ -42,7 +42,7 @@ def show_thread(thread_id, sub_name):
     subreddits = get_subreddits()
     join = JoinSub()
     leave = LeaveSub()
-    users = User.query.all()
+    child_comment_form = CreateComment()
 
     thread = Thread.query.filter_by(id=thread_id).first()
 
@@ -58,7 +58,7 @@ def show_thread(thread_id, sub_name):
 
     return render_template("view_thread.html", thread=thread, login_form=login_form, register_form=register_form,
                            subreddits=subreddits, join=join, leave=leave, current_subreddit=current_subreddit,
-                           comment_form=comment_form, owner=get_comment_owner)
+                           comment_form=comment_form, owner=get_comment_owner, child_comment_form=child_comment_form)
 
 
 @web_threads.route("<int:thread_id>/create", methods=["POST"])
@@ -79,24 +79,20 @@ def create_comment(thread_id):
         return redirect(url_for("web_threads.show_thread", thread_id=thread_id))
 
 
-@web_threads.route("<int:thread_id>/<int:comment>/create", methods=["POST"])
+@web_threads.route("<int:thread_id>/<int:comment_id>/create", methods=["POST"])
 @login_required
-def create_child_comment(thread_id, comment_id=None):
+def create_child_comment(thread_id, comment_id):
     user_id = current_user.get_id()
     comment_form = CreateComment()
-
-    if comment_id == None:
-        pass
 
     if comment_form.submit.data:
         comment = Comment()
         comment.comment_owner = user_id
-        comment.parent_thread = thread_id
         comment.parent_comment = comment_id
         comment.content = comment_form.content.data
 
         db.session.add(comment)
         db.session.commit()
 
-        return redirect(url_for("web_threads.show_thread", thread_id=thread_id))
+        return redirect(url_for("web_threads.show_thread", thread_id=thread_id, comment_id=comment_id))
 
