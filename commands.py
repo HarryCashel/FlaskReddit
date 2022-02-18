@@ -36,7 +36,7 @@ def seed_db():
         user = User()
         user.email = f"user{i}@testing.com"
         user.username = faker.name()
-        user.password = bcrypt.generate_password_hash("12345678").decode("utf-8")
+        user.password = user.set_password("12345678")
         db.session.add(user)
         users.append(user)
 
