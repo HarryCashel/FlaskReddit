@@ -68,7 +68,7 @@ The figure below is the database diagram that was created in planning stage to b
 the database. Postgres is a relational database management system that was chosen due to my familiarity and how suited
 it is to my database requirements.
 
-![db-schema](docs/FlaskRedditERD%20(1).png)
+![db-schema](docs/FlaskRedditERD%20(2).png)
 ---
 #### 3.2 Database Tables
 
@@ -146,7 +146,6 @@ to maintain a Stateful session for a logged-in user
 
 ![web-login](docs/weblogin.png)
 ![web-login](docs/websignup.png)
-![web-login](docs/webcreatepost.png)
 
 ---
 #### 3.4 Functionalities
