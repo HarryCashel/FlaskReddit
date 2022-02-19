@@ -1,6 +1,7 @@
 from main import db
 from utils import pretty_date
 
+
 class Thread(db.Model):
     __tablename__ = "threads"
 
