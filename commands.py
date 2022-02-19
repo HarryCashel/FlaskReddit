@@ -36,7 +36,7 @@ def seed_db():
         user = User()
         user.email = f"user{i}@testing.com"
         user.username = faker.name()
-        user.password = user.set_password("12345678")
+        user.password = bcrypt.generate_password_hash("12345678").decode("utf-8")
         db.session.add(user)
         users.append(user)
 
@@ -61,13 +61,14 @@ def seed_db():
     for i in range(30):
         owner = random.choice(users).id
         sub_id = Subreddit.query.filter_by(owner_id=owner).first()
-        thread = Thread()
-        thread.title = faker.catch_phrase()
-        thread.content = faker.paragraph(nb_sentences=2)
-        thread.thread_owner = owner
-        thread.parent_subreddit = sub_id.id
+        if sub_id:
+            thread = Thread()
+            thread.title = faker.catch_phrase()
+            thread.content = faker.paragraph(nb_sentences=2)
+            thread.thread_owner = owner
+            thread.parent_subreddit = sub_id.id
 
-        db.session.add(thread)
+            db.session.add(thread)
 
     db.session.commit()
 
