@@ -30,6 +30,13 @@ def get_comment_owner(comment_id):
     return username
 
 
+def get_sub_owner(sub_id):
+    """Function to query database for username of subreddit owner"""
+    user = Subreddit.query.filter_by(id=sub_id).first().owner_id
+    username = User.query.filter_by(id=user).first().username
+    return username
+
+
 @web_threads.route('/<int:thread_id>', defaults={'sub_name': None})
 def show_thread(thread_id, sub_name):
     """Show a specific thread"""
@@ -58,7 +65,8 @@ def show_thread(thread_id, sub_name):
 
     return render_template("view_thread.html", thread=thread, login_form=login_form, register_form=register_form,
                            subreddits=subreddits, join=join, leave=leave, current_subreddit=current_subreddit,
-                           comment_form=comment_form, owner=get_comment_owner, child_comment_form=child_comment_form)
+                           comment_form=comment_form, owner=get_comment_owner, child_comment_form=child_comment_form,
+                           get_sub_owner=get_sub_owner)
 
 
 @web_threads.route("<int:thread_id>/create", methods=["POST"])
